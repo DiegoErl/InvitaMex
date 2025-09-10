@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EventosPro - Invitaciones Digitales Ecológicas</title>
+    <title>InvitaMex </title>
 
     <!-- Estilos externos -->
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
@@ -15,61 +15,8 @@
 </head>
 
 <body>
-    <header class="header" id="header">
-        <nav class="navbar">
-            <div class="logo-container">
-                <div class="logo">IM</div>
-                <h1 class="brand-name">InvitaMex</h1>
-            </div>
 
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-box" placeholder="Buscar eventos...">
-            </div>
-
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#about" class="nav-link">
-                        <i class="fas fa-question-circle"></i>
-                        Sobre Nosotros
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#contact" class="nav-link">
-                        <i class="fas fa-envelope"></i>
-                        Contacto
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#events" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        Eventos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#login" class="btn-login">
-                        <i class="fas fa-user"></i>
-                        Iniciar Sesión
-                    </a>
-                </li>
-            </ul>
-
-            <div class="mobile-menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-
-            <div class="mobile-menu">
-                <ul class="mobile-nav-menu">
-                    <li><a href="#about" class="nav-link"><i class="fas fa-question-circle"></i> Sobre Nosotros</a></li>
-                    <li><a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contacto</a></li>
-                    <li><a href="#events" class="nav-link"><i class="fas fa-calendar-alt"></i> Eventos</a></li>
-                    <li><a href="#login" class="nav-link"><i class="fas fa-user"></i> Iniciar Sesión</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    @include('partials.header')
 
     <!-- HERO SECTION -->
     <section class="hero" id="home">
@@ -229,66 +176,8 @@
     </section>
 
     <!-- FOOTER -->
-    <footer class="footer" id="contact">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <div class="logo">IM</div>
-                        <h3 class="brand-name">InvitaMex</h3>
-                    </div>
-                    <p class="footer-description">
-                        La plataforma de invitaciones digitales ecológicas.
-                        Creamos experiencias únicas para tus eventos más especiales,
-                        cuidando el medio ambiente y conectando personas.
-                    </p>
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </div>
-                </div>
+    @include('partials.footer')
 
-                <div class="footer-section">
-                    <h3>Producto</h3>
-                    <ul class="footer-links">
-                        <li><a href="#features">Características</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Empresa</h3>
-                    <ul class="footer-links">
-                        <li><a href="#about">Sobre Nosotros</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h3>Soporte</h3>
-                    <ul class="footer-links">
-                        <li><a href="#contact">Contacto</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <div class="copyright">
-                    © 2025 InvitaMex. Todos los derechos reservados.
-                </div>
-                <div class="footer-links">
-                    <a href="#privacy">Política de Privacidad</a>
-                    <span style="margin: 0 10px;">|</span>
-                    <a href="#terms">Términos de Servicio</a>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <!-- BACK TO TOP BUTTON -->
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba">
