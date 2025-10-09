@@ -133,7 +133,7 @@
                         </div>
                     </div>
                     
-                    <div class="team-member animate-on-scroll">
+                    <!-- <div class="team-member animate-on-scroll">
                         <div class="team-avatar">CM</div>
                         <div class="team-info">
                             <h3 class="team-name">Carlos Mendoza</h3>
@@ -147,7 +147,7 @@
                                 <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     
                     
                 </div>
@@ -221,7 +221,7 @@
                     y cómo podemos trabajar juntos para crear un futuro más sustentable.
                 </p>
                 <div>
-                    <a href="{{ route('contacto') }}" class="btn btn-secondary">
+                    <a href="#" class="btn btn-secondary">
                         <i class="fas fa-envelope"></i>
                         Contáctanos
                     </a>
@@ -238,8 +238,8 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="{{ asset('js/main.js') }}" defer></script>
     <script src="{{ asset('js/sobre.js') }}" defer></script>
+    <script src="{{ asset('js/main.js') }}" ></script>
 
     
 </body>

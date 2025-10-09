@@ -268,8 +268,9 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <script src="{{ asset('js/main.js') }}" defer></script>
     <script src="{{ asset('js/contacto.js') }}" defer></script>
+    <script src="{{ asset('js/main.js') }}" defer></script>
+    
 
     
 </body>

@@ -31,7 +31,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#login" class="btn-login">
+                    <a href="{{ route('login') }}" class="btn-login">
                         <i class="fas fa-user"></i>
                         Iniciar Sesión
                     </a>
