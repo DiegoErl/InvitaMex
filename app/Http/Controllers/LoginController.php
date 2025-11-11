@@ -10,9 +10,9 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        // Si ya está autenticado, redirigir
+        // Si ya está autenticado, redirigir al perfil
         if (Auth::check()) {
-            return redirect()->route('dashboard'); // o la ruta que prefieras
+            return redirect()->route('perfil');
         }
         
         return view('login');
@@ -46,8 +46,8 @@ class LoginController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => '¡Bienvenido de nuevo!',
-                'redirect' => route('dashboard') // o la ruta que prefieras
+                'message' => '¡Bienvenido de nuevo, ' . Auth::user()->firstName . '!',
+                'redirect' => route('perfil')
             ], 200);
         }
 
@@ -60,9 +60,17 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+        
+        // Invalidar la sesión completamente
         $request->session()->invalidate();
+        
+        // Regenerar el token CSRF
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        // Redirigir al login con headers para prevenir cache
+        return redirect()->route('login')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 }

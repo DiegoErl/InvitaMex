@@ -128,12 +128,23 @@
                         acceso rápido y confirmación de asistencia sin complicaciones.
                     </p>
                 </div>
+
+                <div class="feature-card animate-on-scroll">
+        <div class="feature-icon">
+            <i class="fas fa-palette"></i>
+        </div>
+        <h3 class="feature-title">Diseños Personalizables</h3>
+        <p class="feature-description">
+            Elige entre múltiples plantillas elegantes y personaliza cada
+            detalle: colores, fuentes, imágenes y animaciones para reflejar tu estilo único.
+        </p>
+    </div>
             </div>
         </div>
     </section>
 
     <!-- STATS SECTION -->
-    <section class="stats" id="stats">
+    <!-- <section class="stats" id="stats">
         <div class="stats-container">
             <div class="stat-item">
                 <div class="stat-number" data-count="50000">0</div>
@@ -152,7 +163,7 @@
                 <div class="stat-label">% Satisfacción</div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- CTA SECTION -->
     <section class="cta" id="cta">
@@ -162,14 +173,10 @@
                 Únete a miles de usuarios que ya han descubierto la forma más moderna
                 y ecológica de invitar a sus eventos especiales.
             </p>
-            <div class="hero-buttons">
+            <div class="cta-buttons">
                 <a href="#signup" class="btn btn-primary">
                     <i class="fas fa-rocket"></i>
                     Comenzar Gratis
-                </a>
-                <a href="#demo" class="btn btn-secondary">
-                    <i class="fas fa-eye"></i>
-                    Ver Demo
                 </a>
             </div>
         </div>

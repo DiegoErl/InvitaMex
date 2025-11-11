@@ -263,6 +263,13 @@
             flex-wrap: wrap;
         }
 
+        .cta-buttons {
+         display: flex;
+         justify-content: center;
+         margin-top: 20px;
+        }
+
+
         .btn {
             padding: 15px 35px;
             border: none;

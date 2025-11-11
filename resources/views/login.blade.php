@@ -97,9 +97,7 @@
                 </div>
 
                 <!-- LOGIN FORM -->
-                <form class="login-form" id="loginForm"
-                    data-login-url="{{ route('login.store') }}"
-                    data-dashboard-url="{{ route('dashboard') }}">
+                <form class="login-form" id="loginForm" data-login-url="{{ route('login.store') }}" data-perfil-url="{{ route('perfil') }}">
                     @csrf
 
                     <div class="form-group">

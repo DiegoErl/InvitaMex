@@ -56,11 +56,12 @@ class RegisterController extends Controller
         ]);
 
         // Auto-login después del registro
-    Auth::login($user);
+        Auth::login($user);
 
         return response()->json([
             'success' => true,
-            'message' => '¡Registro exitoso! Tu cuenta ha sido creada.',
+            'message' => '¡Bienvenido a InvitaCleth, ' . $user->firstName . '!',
+            'redirect' => route('perfil'),
             'user' => [
                 'id' => $user->id,
                 'firstName' => $user->firstName,

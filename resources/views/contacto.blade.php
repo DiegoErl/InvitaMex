@@ -84,7 +84,7 @@
                 </div>
 
                 <!-- DEPARTAMENTOS ESPECÍFICOS -->
-                <div class="quick-contact">
+                <!-- <div class="quick-contact">
                     <h3>Contacto por Departamento</h3>
                     <div class="quick-links">
                         <a href="#" class="quick-link" onclick="contactWhatsApp('soporte')">
@@ -104,7 +104,7 @@
                             <span>Sugerencias</span>
                         </a>
                     </div>
-                </div>
+                </div> -->
             </section>
 
             <!-- CONTACT FORM SECTION -->

@@ -271,7 +271,7 @@
     
     const form = this;
     const loginUrl = form.dataset.loginUrl;
-    const dashboardUrl = form.dataset.dashboardUrl;
+    const perfilUrl = form.dataset.perfilUrl;
     const csrfToken = form.querySelector('input[name="_token"]').value;
     
     // Limpiar errores previos
@@ -301,7 +301,7 @@
             // Mostrar mensaje de éxito
             alert(data.message || '¡Bienvenido de nuevo!');
             // Redirigir al dashboard
-            window.location.href = data.redirect || dashboardUrl;
+            window.location.href = data.redirect || perfilUrl;
         } else {
             // Mostrar errores específicos de campos
             if (data.errors) {
