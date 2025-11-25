@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\QRValidationController;
+use App\Http\Controllers\PaymentController;
 
 // Ruta principal
 Route::get('/', function () {
@@ -61,3 +62,9 @@ Route::get('/api/eventos', [EventController::class, 'getEventsApi'])->name('api.
 
 // API para validar QR - AGREGAR ESTA LÍNEA
 Route::post('/api/validate-qr', [QRValidationController::class, 'validateQR']);
+
+// Rutas de pago (protegidas)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/eventos/{id}/create-payment-intent', [PaymentController::class, 'createPaymentIntent']);
+    Route::post('/eventos/{id}/confirm-payment', [PaymentController::class, 'confirmPayment']);
+});

@@ -260,6 +260,7 @@ class EventController extends Controller
                 'title' => $event->title,
                 'type' => $event->type,
                 'organizer' => $event->host_name,
+                'organizer_user_id' => $event->user_id, // AGREGAR ESTA LÍNEA
                 'date' => $event->event_date->format('Y-m-d') . 'T' . $event->event_time->format('H:i:s'),
                 'location' => $event->location,
                 'description' => $event->description,

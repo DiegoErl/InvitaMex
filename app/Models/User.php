@@ -18,6 +18,8 @@ class User extends Authenticatable
         'country',
         'password',
         'profile_photo',
+        'stripe_account_id',
+        'stripe_account_verified',
     ];
 
     protected $hidden = [
