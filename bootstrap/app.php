@@ -11,10 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(prepend: [
+            \App\Http\Middleware\ForceNgrokUrl::class,
+        ]);
+        
         $middleware->alias([
             'prevent-back' => \App\Http\Middleware\PreventBackHistory::class,
+            'verified.stripe' => \App\Http\Middleware\VerifyStripeAccount::class, // ⭐ AGREGA ESTO
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

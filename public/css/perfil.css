@@ -254,4 +254,272 @@
                 font-size: 1.5rem;
             }
         }
+
+        /* Banner de verificación */
+.verification-banner {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 3px solid #ffc107;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.verification-content {
+    display: flex;
+    gap: 2rem;
+    align-items: start;
+}
+
+.verification-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #ffc107;
+    flex-shrink: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.verification-info {
+    flex: 1;
+}
+
+.verification-info h3 {
+    color: #856404;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.verification-info p {
+    color: #856404;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.verification-restrictions {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+}
+
+.verification-restrictions strong {
+    display: block;
+    color: #dc3545;
+    margin-bottom: 0.5rem;
+}
+
+.verification-restrictions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.verification-restrictions li {
+    padding: 0.5rem 0;
+    color: #666;
+}
+
+.verification-restrictions i {
+    color: #dc3545;
+    margin-right: 0.5rem;
+}
+
+.btn-verify {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-verify:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.verification-success {
+    background: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Banner de éxito de verificación */
+.verification-success-banner {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 3px solid #28a745;
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #155724;
+    font-size: 1.2rem;
+    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+    animation: slideDown 0.5s ease;
+}
+
+.verification-success-banner i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Banner de registro completado */
+.registration-complete-banner {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    border: 3px solid #17a2b8;
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #0c5460;
+    font-size: 1.2rem;
+    box-shadow: 0 10px 30px rgba(23, 162, 184, 0.3);
+    animation: slideDown 0.5s ease;
+}
+
+.registration-complete-banner i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .verification-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .verification-icon {
+        margin: 0 auto;
+    }
+}
+
+.btn-disabled {
+    background: #6c757d;
+    color: white;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Banner de Stripe Connect */
+.stripe-connect-banner {
+    background: linear-gradient(135deg, #635bff 0%, #4f46e5 100%);
+    border: 3px solid #5145cd;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(99, 91, 255, 0.3);
+    animation: slideDown 0.5s ease;
+}
+
+.stripe-content {
+    display: flex;
+    gap: 2rem;
+    align-items: start;
+}
+
+.stripe-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #635bff;
+    flex-shrink: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stripe-info {
+    flex: 1;
+}
+
+.stripe-info h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.stripe-info p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    opacity: 0.95;
+}
+
+.btn-stripe {
+    background: white;
+    color: #635bff;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-stripe:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Banner de cuenta conectada */
+.stripe-connected-banner {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 3px solid #28a745;
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #155724;
+    font-size: 1.1rem;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #155724;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-link:hover {
+    color: #0c5460;
+}
    

@@ -47,4 +47,9 @@ class Event extends Model
     {
         return $this->hasMany(Invitation::class)->where('status', 'confirmado');
     }
+
+    public function images()
+    {
+        return $this->hasMany(EventImage::class)->orderBy('order');
+    }
 }

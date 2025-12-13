@@ -9,8 +9,8 @@
     <link href="{{ asset('css/crearEvento.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    
+
+
 </head>
 
 <body>
@@ -133,14 +133,18 @@
                         </div>
                     </div>
 
-                    <!-- PASO 3: Imagen del Evento -->
+                    <!-- PASO 3: Imágenes del Evento -->
                     <div class="form-step">
                         <div class="step-header">
                             <div class="step-number">3</div>
-                            <h3 class="step-title">Imagen del Evento</h3>
+                            <h3 class="step-title">Imágenes del Evento</h3>
                         </div>
 
+                        <!-- Imagen Principal (Portada) - OBLIGATORIA -->
                         <div class="form-group">
+                            <label class="form-label">
+                                Imagen Principal (Portada) <span class="required">*</span>
+                            </label>
                             <div class="image-upload-zone" id="imageUploadZone" onclick="document.getElementById('imageInput').click()">
                                 <div class="image-preview-container" id="imagePreviewContainer">
                                     <img id="imagePreview" class="image-preview" alt="Vista previa">
@@ -150,18 +154,55 @@
                                 </div>
                                 <div class="upload-placeholder" id="uploadPlaceholder">
                                     <i class="fas fa-cloud-upload-alt"></i>
-                                    <p style="font-size: 1.2rem; font-weight: 600; margin-top: 1rem;">Haz clic para subir una imagen</p>
+                                    <p style="font-size: 1.2rem; font-weight: 600; margin-top: 1rem;">Haz clic para subir la imagen de portada</p>
                                     <p style="font-size: 0.9rem; color: #999; margin-top: 0.5rem;">PNG, JPG o GIF (máximo 5MB)</p>
                                     <p style="font-size: 0.85rem; color: #667eea; margin-top: 1rem; font-weight: 600;">
-                                        <i class="fas fa-info-circle"></i> La imagen aparecerá en la tarjeta del evento
+                                        <i class="fas fa-info-circle"></i> Esta imagen aparecerá como portada del evento
                                     </p>
                                 </div>
                             </div>
                             <input type="file"
                                 id="imageInput"
                                 name="event_image"
-                                accept="image/*">
+                                accept="image/*"
+                                required>
                             <div class="field-error" id="event_imageError"></div>
+                        </div>
+
+                        <!-- Galería Adicional (Opcional - Máximo 5) -->
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label class="form-label">
+                                Galería Adicional (Opcional - Máximo 5 imágenes)
+                            </label>
+                            <div class="info-box" style="margin-bottom: 1rem;">
+                                <i class="fas fa-images"></i>
+                                Agrega más fotos para mostrar en un carrusel dentro del evento. Los visitantes podrán ver más detalles.
+                            </div>
+
+                            <div class="gallery-upload-zone" onclick="document.getElementById('galleryInput').click()">
+                                <div class="gallery-placeholder" id="galleryPlaceholder">
+                                    <i class="fas fa-images"></i>
+                                    <p style="font-size: 1.1rem; font-weight: 600; margin-top: 1rem;">Haz clic para agregar imágenes a la galería</p>
+                                    <p style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">Selecciona hasta 5 imágenes adicionales</p>
+                                </div>
+
+                                <div class="gallery-preview-grid" id="galleryPreviewGrid" style="display: none;">
+                                    <!-- Las previews se agregarán aquí dinámicamente -->
+                                </div>
+                            </div>
+
+                            <input type="file"
+                                id="galleryInput"
+                                name="additional_images[]"
+                                accept="image/*"
+                                multiple
+                                style="display: none;">
+                            <div class="field-error" id="additional_imagesError"></div>
+
+                            <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="galleryCount">0</span> de 5 imágenes seleccionadas
+                            </div>
                         </div>
                     </div>
 
@@ -447,7 +488,7 @@
         </div>
     </div>
 
-    
+
 
     <script src="{{ asset('js/crearEvento.js') }}" defer></script>
 

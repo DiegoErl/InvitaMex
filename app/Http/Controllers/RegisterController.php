@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered; // ⭐ AGREGAR
 
 class RegisterController extends Controller
 {
@@ -16,58 +17,53 @@ class RegisterController extends Controller
     }
 
     public function register(Request $request)
-    {
-        // Validar los datos
-        $validator = Validator::make($request->all(), [
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'nullable|string|max:20',
-            'country' => 'nullable|string|max:2',
-            'password' => 'required|string|min:8|confirmed',
-            'terms' => 'required|accepted',
-        ], [
-            'firstName.required' => 'El nombre es obligatorio',
-            'lastName.required' => 'El apellido es obligatorio',
-            'email.required' => 'El correo electrónico es obligatorio',
-            'email.email' => 'Ingresa un email válido',
-            'email.unique' => 'Este email ya está registrado',
-            'password.required' => 'La contraseña es obligatoria',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres',
-            'password.confirmed' => 'Las contraseñas no coinciden',
-            'terms.accepted' => 'Debes aceptar los términos y condiciones',
-        ]);
+{
+    // Validación
+    $validator = Validator::make($request->all(), [
+        'firstName' => 'required|string|max:255',
+        'lastName' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'phone' => 'nullable|string|max:20',
+        'country' => 'nullable|string|max:2',
+        'password' => 'required|string|min:8|confirmed',
+        'terms' => 'required|accepted',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        // Crear el usuario
-        $user = User::create([
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'country' => $request->country,
-            'password' => Hash::make($request->password),
-        ]);
-
-        // Auto-login después del registro
-        Auth::login($user);
-
+    if ($validator->fails()) {
         return response()->json([
-            'success' => true,
-            'message' => '¡Bienvenido a InvitaCleth, ' . $user->firstName . '!',
-            'redirect' => route('perfil'),
-            'user' => [
-                'id' => $user->id,
-                'firstName' => $user->firstName,
-                'lastName' => $user->lastName,
-                'email' => $user->email,
-            ]
-        ], 201);
+            'success' => false,
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    // Crear usuario
+    $user = User::create([
+        'firstName' => $request->firstName,
+        'lastName' => $request->lastName,
+        'email' => $request->email,
+        'phone' => $request->phone,
+        'country' => $request->country,
+        'password' => Hash::make($request->password),
+    ]);
+
+    // Enviar email de verificación
+    event(new Registered($user));
+
+    // Login automático
+    Auth::login($user);
+
+    // ⭐ SIEMPRE devolver JSON, nada de redirects
+    return response()->json([
+        'success' => true,
+        'message' => '¡Bienvenido a InvitaCleth, ' . $user->firstName . '!',
+        'redirect' => route('perfil'),
+        'user' => [
+            'id' => $user->id,
+            'firstName' => $user->firstName,
+            'lastName' => $user->lastName,
+            'email' => $user->email,
+        ]
+    ], 201);
+}
+
 }

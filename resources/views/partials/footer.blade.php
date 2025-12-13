@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="footer-section">
-                    <h3>Producto</h3>
+                    <h3>¿Que hacemos?</h3>
                     <ul class="footer-links">
                         <li><a href="#features">Características</a></li>
                     </ul>

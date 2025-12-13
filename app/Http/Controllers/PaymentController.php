@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
+
 class PaymentController extends Controller
 {
     public function __construct()
@@ -19,14 +20,20 @@ class PaymentController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    // Crear Payment Intent para el modal
     public function createPaymentIntent(Request $request, $eventId)
     {
-        $event = Event::findOrFail($eventId);
+        $event = Event::with('user')->findOrFail($eventId);
         
         // Verificar que el evento sea de pago
         if ($event->payment_type !== 'pago') {
             return response()->json(['error' => 'Este evento es gratuito'], 400);
+        }
+
+        // ⭐ VERIFICAR QUE EL ORGANIZADOR TENGA STRIPE CONECTADO
+        if (!$event->user->hasStripeAccount()) {
+            return response()->json([
+                'error' => 'El organizador aún no ha configurado su cuenta de pagos. Contacta con el organizador.'
+            ], 400);
         }
 
         // Verificar que el usuario NO sea el organizador
@@ -53,7 +60,11 @@ class PaymentController extends Controller
 
         try {
             $amount = $event->price * 100; // Stripe usa centavos
+            
+            // ⭐ CALCULAR COMISIÓN DE LA PLATAFORMA (10%)
+            $platformFee = round($amount * 0.10); // 10% para la plataforma
 
+            // ⭐ CREAR PAYMENT INTENT CON STRIPE CONNECT
             $paymentIntent = PaymentIntent::create([
                 'amount' => $amount,
                 'currency' => 'mxn',
@@ -63,6 +74,12 @@ class PaymentController extends Controller
                     'user_id' => Auth::id(),
                     'organizer_id' => $event->user_id,
                 ],
+                // ⭐ STRIPE CONNECT: Transferir al organizador
+                'transfer_data' => [
+                    'destination' => $event->user->stripe_account_id,
+                ],
+                // ⭐ COMISIÓN DE LA PLATAFORMA
+                'application_fee_amount' => $platformFee,
             ]);
 
             return response()->json([
@@ -70,11 +87,11 @@ class PaymentController extends Controller
                 'publishableKey' => config('services.stripe.key'),
             ]);
         } catch (\Exception $e) {
+            Log::error('Error creating payment intent: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    // Confirmar pago exitoso
     public function confirmPayment(Request $request, $eventId)
     {
         $request->validate([
@@ -87,8 +104,10 @@ class PaymentController extends Controller
             if ($paymentIntent->status === 'succeeded') {
                 $event = Event::findOrFail($eventId);
                 $amount = $paymentIntent->amount / 100;
-                $platformFee = $amount * 0.10; // 10% para ti
-                $organizerAmount = $amount * 0.90; // 90% para organizador
+                
+                // ⭐ CALCULAR COMISIONES REALES
+                $platformFee = $paymentIntent->application_fee_amount / 100; // 10%
+                $organizerAmount = $amount - $platformFee; // 90%
 
                 // Crear registro de pago
                 $payment = Payment::create([
@@ -158,6 +177,7 @@ class PaymentController extends Controller
             ], 400);
 
         } catch (\Exception $e) {
+            Log::error('Error confirming payment: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()

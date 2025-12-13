@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -111,8 +113,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Cards de invitaciones */
@@ -448,6 +457,7 @@
         }
     </style>
 </head>
+
 <body>
     @include('partials.header')
 
@@ -473,176 +483,180 @@
         <!-- Contenido: Mis Invitaciones -->
         <div id="invitations-content" class="tab-content active">
             @if($invitations->count() > 0)
-                <div class="invitations-grid">
-                    @foreach($invitations as $invitation)
-                        <div class="invitation-card">
-                            <div class="invitation-header">
-                                <h3>{{ $invitation->event->title }}</h3>
-                                <div class="event-date">
-                                    <i class="fas fa-calendar"></i>
-                                    {{ $invitation->event->event_date->format('d/m/Y') }} - 
-                                    {{ $invitation->event->event_time->format('H:i') }}
+            <div class="invitations-grid">
+                @foreach($invitations as $invitation)
+                <div class="invitation-card">
+                    <div class="invitation-header">
+                        <h3>{{ $invitation->event->title }}</h3>
+                        <div class="event-date">
+                            <i class="fas fa-calendar"></i>
+                            {{ $invitation->event->event_date->format('d/m/Y') }} -
+                            {{ $invitation->event->event_time->format('H:i') }}
+                        </div>
+                    </div>
+
+                    <div class="invitation-body">
+                        <div class="qr-section">
+                            <h4 style="margin-bottom: 1rem; color: #333;">
+                                <i class="fas fa-qrcode"></i> Tu Código QR
+                            </h4>
+                            <div class="qr-code">
+                                @if($invitation->qr_image)
+                                <img src="{{ asset('storage/' . $invitation->qr_image) }}" alt="QR Code">
+                                @else
+                                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ccc;">
+                                    <i class="fas fa-qrcode" style="font-size: 3rem;"></i>
+                                </div>
+                                @endif
+                            </div>
+                            <div class="qr-code-text">
+                                {{ $invitation->qr_code }}
+                            </div>
+                            <span class="status-badge status-{{ $invitation->status }}">
+                                @switch($invitation->status)
+                                @case('confirmado')
+                                <i class="fas fa-check-circle"></i> Confirmado
+                                @break
+                                @case('pendiente')
+                                <i class="fas fa-clock"></i> Pendiente
+                                @break
+                                @case('usado')
+                                <i class="fas fa-check-double"></i> Usado
+                                @break
+                                @case('cancelado')
+                                <i class="fas fa-times-circle"></i> Cancelado
+                                @break
+                                @endswitch
+                            </span>
+                        </div>
+
+                        <div class="invitation-details">
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <div class="detail-label">Organizador</div>
+                                    <div class="detail-value">{{ $invitation->event->host_name }}</div>
                                 </div>
                             </div>
 
-                            <div class="invitation-body">
-                                <div class="qr-section">
-                                    <h4 style="margin-bottom: 1rem; color: #333;">
-                                        <i class="fas fa-qrcode"></i> Tu Código QR
-                                    </h4>
-                                    <div class="qr-code">
-                                        @if($invitation->qr_image)
-                                            <img src="{{ asset('storage/' . $invitation->qr_image) }}" alt="QR Code">
-                                        @else
-                                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ccc;">
-                                                <i class="fas fa-qrcode" style="font-size: 3rem;"></i>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <div class="qr-code-text">
-                                        {{ $invitation->qr_code }}
-                                    </div>
-                                    <span class="status-badge status-{{ $invitation->status }}">
-                                        @switch($invitation->status)
-                                            @case('confirmado')
-                                                <i class="fas fa-check-circle"></i> Confirmado
-                                                @break
-                                            @case('pendiente')
-                                                <i class="fas fa-clock"></i> Pendiente
-                                                @break
-                                            @case('usado')
-                                                <i class="fas fa-check-double"></i> Usado
-                                                @break
-                                            @case('cancelado')
-                                                <i class="fas fa-times-circle"></i> Cancelado
-                                                @break
-                                        @endswitch
-                                    </span>
+                            <div class="detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
                                 </div>
-
-                                <div class="invitation-details">
-                                    <div class="detail-item">
-                                        <div class="detail-icon">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div class="detail-content">
-                                            <div class="detail-label">Organizador</div>
-                                            <div class="detail-value">{{ $invitation->event->host_name }}</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail-item">
-                                        <div class="detail-icon">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                        </div>
-                                        <div class="detail-content">
-                                            <div class="detail-label">Ubicación</div>
-                                            <div class="detail-value">{{ $invitation->event->location }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="invitation-actions">
-                                    <button class="btn btn-primary" onclick="printInvitation(this)">
-                                        <i class="fas fa-print"></i>
-                                        Imprimir
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="downloadQR(this)">
-                                        <i class="fas fa-download"></i>
-                                        Descargar QR
-                                    </button>
-                                    <button class="btn btn-outline" onclick="shareInvitation('{{ $invitation->event->id }}')">
-                                        <i class="fas fa-share"></i>
-                                        Compartir
-                                    </button>
+                                <div class="detail-content">
+                                    <div class="detail-label">Ubicación</div>
+                                    <div class="detail-value">{{ $invitation->event->location }}</div>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+
+                        <div class="invitation-actions">
+                            <button class="btn btn-primary" onclick="printInvitation(this)">
+                                <i class="fas fa-print"></i>
+                                Imprimir
+                            </button>
+                            <button class="btn btn-secondary" onclick="downloadQR(this)">
+                                <i class="fas fa-download"></i>
+                                Descargar QR
+                            </button>
+                            <button class="btn btn-outline" onclick="shareInvitation('{{ $invitation->event->id }}')">
+                                <i class="fas fa-share"></i>
+                                Compartir
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                @endforeach
+            </div>
             @else
-                <div class="empty-state">
-                    <i class="fas fa-ticket-alt"></i>
-                    <h2>No tienes invitaciones aún</h2>
-                    <p>Explora los eventos disponibles y confirma tu asistencia</p>
-                    <a href="{{ route('eventos') }}" class="btn btn-primary" style="display: inline-flex;">
-                        <i class="fas fa-calendar-alt"></i>
-                        Ver Eventos Disponibles
-                    </a>
-                </div>
+            <div class="empty-state">
+                <i class="fas fa-ticket-alt"></i>
+                <h2>No tienes invitaciones aún</h2>
+                <p>Explora los eventos disponibles y confirma tu asistencia</p>
+                <a href="{{ route('eventos') }}" class="btn btn-primary" style="display: inline-flex;">
+                    <i class="fas fa-calendar-alt"></i>
+                    Ver Eventos Disponibles
+                </a>
+            </div>
             @endif
         </div>
 
         <!-- Contenido: Mis Eventos -->
         <div id="events-content" class="tab-content">
             @if($myEvents->count() > 0)
-                <div class="invitations-grid">
-                    @foreach($myEvents as $event)
-                        <div class="event-card">
-                            <div class="event-card-header">
-                                <h3>{{ $event->title }}</h3>
-                                <div style="margin-top: 0.5rem; opacity: 0.9;">
-                                    <i class="fas fa-calendar"></i>
-                                    {{ $event->event_date->format('d/m/Y') }} - {{ $event->event_time->format('H:i') }}
-                                </div>
+            <div class="invitations-grid">
+                @foreach($myEvents as $event)
+                <div class="event-card">
+                    <div class="event-card-header">
+                        <h3>{{ $event->title }}</h3>
+                        <div style="margin-top: 0.5rem; opacity: 0.9;">
+                            <i class="fas fa-calendar"></i>
+                            {{ $event->event_date->format('d/m/Y') }} - {{ $event->event_time->format('H:i') }}
+                        </div>
+                    </div>
+
+                    <div class="event-card-body">
+                        <div class="event-stats">
+                            <div class="stat-box">
+                                <span class="stat-number">{{ $event->confirmed_invitations_count }}</span>
+                                <span class="stat-label">Confirmados</span>
                             </div>
-
-                            <div class="event-card-body">
-                                <div class="event-stats">
-                                    <div class="stat-box">
-                                        <span class="stat-number">{{ $event->confirmed_invitations_count }}</span>
-                                        <span class="stat-label">Confirmados</span>
-                                    </div>
-                                    <div class="stat-box">
-                                        <span class="stat-number">{{ $event->invitations_count }}</span>
-                                        <span class="stat-label">Total Invitaciones</span>
-                                    </div>
-                                    <div class="stat-box">
-                                        <span class="stat-number">
-                                            @if($event->max_attendees)
-                                                {{ $event->max_attendees }}
-                                            @else
-                                                ∞
-                                            @endif
-                                        </span>
-                                        <span class="stat-label">Capacidad</span>
-                                    </div>
-                                </div>
-
-                                <div class="detail-item" style="margin-bottom: 1.5rem;">
-                                    <div class="detail-icon">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
-                                    <div class="detail-content">
-                                        <div class="detail-label">Ubicación</div>
-                                        <div class="detail-value">{{ $event->location }}</div>
-                                    </div>
-                                </div>
-
-                                <div class="event-actions">
-                                    <a href="{{ route('eventos.scanner', $event->id) }}" class="btn btn-primary">
-                                        <i class="fas fa-qrcode"></i>
-                                        Escanear QR
-                                    </a>
-                                    <a href="{{ route('eventos.show', $event->id) }}" class="btn btn-outline">
-                                        <i class="fas fa-eye"></i>
-                                        Ver Evento
-                                    </a>
-                                </div>
+                            <div class="stat-box">
+                                <span class="stat-number">{{ $event->invitations_count }}</span>
+                                <span class="stat-label">Total Invitaciones</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-number">
+                                    @if($event->max_attendees)
+                                    {{ $event->max_attendees }}
+                                    @else
+                                    ∞
+                                    @endif
+                                </span>
+                                <span class="stat-label">Capacidad</span>
                             </div>
                         </div>
-                    @endforeach
+
+                        <div class="detail-item" style="margin-bottom: 1.5rem;">
+                            <div class="detail-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Ubicación</div>
+                                <div class="detail-value">{{ $event->location }}</div>
+                            </div>
+                        </div>
+
+                        <div class="event-actions">
+                            <a href="{{ route('eventos.scanner', $event->id) }}" class="btn btn-primary">
+                                <i class="fas fa-qrcode"></i>
+                                Escanear QR
+                            </a>
+                            <a href="{{ route('eventos.show', $event->id) }}" class="btn btn-outline">
+                                <i class="fas fa-eye"></i>
+                                Ver Evento
+                            </a>
+                            <button class="btn btn-danger" onclick="confirmDeleteEvent('{{ $event->id }}', '{{ addslashes($event->title) }}')">
+                                <i class="fas fa-trash"></i>
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                @endforeach
+            </div>
             @else
-                <div class="empty-state">
-                    <i class="fas fa-calendar-plus"></i>
-                    <h2>No has creado eventos aún</h2>
-                    <p>Crea tu primer evento y comienza a generar invitaciones</p>
-                    <a href="{{ route('eventos.create') }}" class="btn btn-primary" style="display: inline-flex;">
-                        <i class="fas fa-plus-circle"></i>
-                        Crear Evento
-                    </a>
-                </div>
+            <div class="empty-state">
+                <i class="fas fa-calendar-plus"></i>
+                <h2>No has creado eventos aún</h2>
+                <p>Crea tu primer evento y comienza a generar invitaciones</p>
+                <a href="{{ route('eventos.create') }}" class="btn btn-primary" style="display: inline-flex;">
+                    <i class="fas fa-plus-circle"></i>
+                    Crear Evento
+                </a>
+            </div>
             @endif
         </div>
     </div>
@@ -675,7 +689,7 @@
         function printInvitation(button) {
             const card = button.closest('.invitation-card');
             const allCards = document.querySelectorAll('.invitation-card');
-            
+
             allCards.forEach(c => {
                 if (c !== card) c.style.display = 'none';
             });
@@ -691,7 +705,7 @@
         function downloadQR(button) {
             const card = button.closest('.invitation-card');
             const qrImage = card.querySelector('.qr-code img');
-            
+
             if (qrImage && qrImage.src) {
                 fetch(qrImage.src)
                     .then(response => response.blob())
@@ -718,7 +732,7 @@
         function shareInvitation(eventId) {
             const url = `${window.location.origin}/eventos/${eventId}`;
             const message = `¡Mira este evento! ${url}`;
-            
+
             if (navigator.share) {
                 navigator.share({
                     title: 'Invitación a Evento',
@@ -741,6 +755,38 @@
                 card.style.display = 'block';
             });
         });
+
+        // Confirmar y eliminar evento
+        function confirmDeleteEvent(eventId, eventTitle) {
+            if (confirm(`¿Estás seguro de que deseas eliminar el evento "${eventTitle}"?\n\nEsta acción no se puede deshacer y se eliminarán todas las invitaciones asociadas.`)) {
+                deleteEvent(eventId);
+            }
+        }
+
+        async function deleteEvent(eventId) {
+            try {
+                const response = await fetch(`/eventos/${eventId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Error al eliminar el evento');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al eliminar el evento');
+            }
+        }
     </script>
 </body>
+
 </html>

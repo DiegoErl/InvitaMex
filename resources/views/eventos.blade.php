@@ -154,8 +154,13 @@
         <div class="modal-content">
             <div class="modal-close" onclick="closeModal()">&times;</div>
 
-            <div class="modal-header" id="modalHeader">
-                <i class="fas fa-calendar-alt"></i>
+            <!-- IMAGEN DE PORTADA PRINCIPAL -->
+            <div class="modal-header-image" id="modalHeaderImage" onclick="openImageViewer(0)">
+                <img id="modalMainImage" src="" alt="Evento" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
+                <div class="image-zoom-hint">
+                    <i class="fas fa-search-plus"></i>
+                    Click para ampliar
+                </div>
             </div>
 
             <div class="modal-body">
@@ -164,6 +169,16 @@
                     <i class="fas fa-user"></i>
                     Organizado por <span id="modalOrganizer">Organizador</span>
                 </p>
+
+                <!-- CARRUSEL DE IMÁGENES ADICIONALES -->
+                <div class="modal-gallery" id="modalGallery" style="display: none;">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">
+                        <i class="fas fa-images"></i> Más imágenes del evento
+                    </h3>
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                        <!-- Se llenarán dinámicamente con JavaScript -->
+                    </div>
+                </div>
 
                 <div class="modal-details-grid">
                     <div class="modal-detail">
@@ -229,6 +244,229 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL DE VISTA AMPLIADA DE IMÁGENES -->
+    <div class="image-viewer-modal" id="imageViewerModal" onclick="closeImageViewer()">
+        <div class="image-viewer-content" onclick="event.stopPropagation()">
+            <button class="viewer-close" onclick="closeImageViewer()">&times;</button>
+
+            <button class="viewer-control prev" onclick="event.stopPropagation(); changeViewerImage(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="viewer-image-container">
+                <img id="viewerImage" src="" alt="Vista ampliada">
+            </div>
+
+            <button class="viewer-control next" onclick="event.stopPropagation(); changeViewerImage(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <div class="viewer-counter">
+                <span id="viewerCounter">1 / 1</span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Estilos para la imagen de portada en el modal */
+        .modal-header-image {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
+            background: #f0f0f0;
+        }
+
+        .image-zoom-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-header-image:hover .image-zoom-hint {
+            opacity: 1;
+        }
+
+        /* Estilos para la galería de miniaturas */
+        .modal-gallery {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .gallery-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .gallery-thumbnail {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .gallery-thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .gallery-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-thumbnail-number {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Modal de vista ampliada */
+        .image-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-viewer-modal.show {
+            display: flex;
+        }
+
+        .image-viewer-content {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-image-container {
+            max-width: 100%;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-image-container img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .viewer-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .viewer-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .viewer-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .viewer-control.prev {
+            left: 20px;
+        }
+
+        .viewer-control.next {
+            right: 20px;
+        }
+
+        .viewer-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .modal-header-image {
+                height: 200px;
+            }
+
+            .gallery-thumbnails {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+
+            .viewer-control {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 
     <!-- FOOTER -->
     @include('partials.footer')

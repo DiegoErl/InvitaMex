@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\EventImage;
 
 use chillerlan\QRCode\QRCode as ChillerlanQRCode;
 use chillerlan\QRCode\QROptions;
@@ -21,7 +22,8 @@ class EventController extends Controller
     {
         $events = Event::where('is_public', true)
             ->where('status', 'publicado')
-            ->with('user')
+            ->where('event_date', '>=', now()->startOfDay()) // Solo eventos futuros
+            ->with(['user', 'images']) //AGREGAR 'images'
             ->orderBy('event_date', 'desc')
             ->paginate(12);
 
@@ -43,10 +45,12 @@ class EventController extends Controller
             'event_time' => 'required',
             'type' => 'required|in:boda,cumpleanos,graduacion,corporativo,social,religioso,otro',
             'payment_type' => 'required|in:gratis,pago',
-            'price' => 'required_if:payment_type,pago|nullable|numeric|min:0',
+            'price' => 'required_if:payment_type,pago|nullable|numeric|min:10', // ⭐ Mínimo $10 (requisito Stripe)
             'description' => 'required|string|max:2000',
             'max_attendees' => 'nullable|integer|min:1',
-            'event_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'event_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'additional_images' => 'nullable|array|max:5',
             'is_public' => 'boolean',
         ], [
             'title.required' => 'El título del evento es obligatorio',
@@ -58,8 +62,12 @@ class EventController extends Controller
             'type.required' => 'El tipo de evento es obligatorio',
             'payment_type.required' => 'Debes indicar si el evento es gratis o de pago',
             'price.required_if' => 'El precio es obligatorio para eventos de pago',
+            'price.min' => 'El precio mínimo es de $10.00 MXN (requisito de Stripe)',
             'description.required' => 'La descripción es obligatoria',
             'event_image.max' => 'La imagen no debe pesar más de 5MB',
+            'event_image.required' => 'La imagen de portada es obligatoria',
+            'additional_images.*.image' => 'Cada archivo debe ser una imagen válida',
+            'additional_images.max' => 'Puedes subir máximo 5 imágenes adicionales',
         ]);
 
         if ($validator->fails()) {
@@ -69,7 +77,30 @@ class EventController extends Controller
             ], 422);
         }
 
-        // Manejar la imagen
+        // ⭐ VALIDACIÓN MEJORADA: Si es evento de pago, verificar Stripe completo
+        if ($request->payment_type === 'pago') {
+            $user = Auth::user();
+            if (empty($user->stripe_account_id) || empty($user->stripe_account_verified)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Para crear eventos de pago, primero debes conectar y verificar tu cuenta de Stripe.',
+                    'stripe_required' => true,
+                    'redirect' => route('stripe.connect')
+                ], 403);
+            }
+
+            // ⭐ VALIDACIÓN ADICIONAL: Precio mínimo de Stripe
+            if (empty($request->price) || $request->price < 10) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => [
+                        'price' => ['El precio mínimo para eventos de pago es $10.00 MXN']
+                    ]
+                ], 422);
+            }
+        }
+
+        // Manejar la imagen principal (portada)
         $imagePath = null;
         if ($request->hasFile('event_image')) {
             $imagePath = $request->file('event_image')->store('event_images', 'public');
@@ -93,6 +124,28 @@ class EventController extends Controller
             'status' => $request->status ?? 'borrador',
         ]);
 
+        // ⭐ Manejar imágenes adicionales de la galería (máximo 5)
+        if ($request->hasFile('additional_images')) {
+            $additionalImages = $request->file('additional_images');
+
+            foreach ($additionalImages as $index => $image) {
+                if ($index >= 5) break; // Máximo 5 imágenes adicionales
+
+                $path = $image->store('event_images', 'public');
+
+                EventImage::create([
+                    'event_id' => $event->id,
+                    'image_path' => $path,
+                    'order' => $index + 1,
+                ]);
+            }
+
+            Log::info('Additional images saved', [
+                'event_id' => $event->id,
+                'images_count' => count($additionalImages)
+            ]);
+        }
+
         $message = $event->status === 'publicado'
             ? '¡Evento publicado exitosamente! Ahora es visible en la página de eventos.'
             : '¡Borrador guardado exitosamente!';
@@ -101,7 +154,7 @@ class EventController extends Controller
             'success' => true,
             'message' => $message,
             'event' => $event,
-            'redirect' => route('eventos') // CAMBIO AQUÍ: redirige a la página de eventos
+            'redirect' => route('eventos')
         ], 201);
     }
 
@@ -224,7 +277,8 @@ class EventController extends Controller
     {
         $query = Event::where('is_public', true)
             ->where('status', 'publicado')
-            ->with(['user', 'confirmedInvitations']);
+            ->where('event_date', '>=', now()->startOfDay()) // NUEVA LÍNEA - Solo eventos futuros
+            ->with(['user', 'confirmedInvitations', 'images']); // AGREGAR 'images'
 
         // Aplicar filtros
         if ($request->filled('search')) {
@@ -269,6 +323,9 @@ class EventController extends Controller
                 'payment_type' => $event->payment_type,
                 'price' => $event->price,
                 'image' => $event->event_image ? asset('storage/' . $event->event_image) : null,
+                'gallery_images' => $event->images->map(function ($img) { // NUEVO
+                    return asset('storage/' . $img->image_path);
+                })->toArray(),
                 'status' => $this->getEventStatus($event->event_date),
                 'color' => $this->getEventColor($event->type),
                 'icon' => $this->getEventIcon($event->type)
@@ -318,5 +375,162 @@ class EventController extends Controller
             'otro' => 'fas fa-calendar-alt'
         ];
         return $icons[$type] ?? 'fas fa-calendar-alt';
+    }
+
+    //.............................................................. Otros métodos de eventos
+
+    // Actualizar evento
+    public function update(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+
+        // Verificar que el usuario sea el creador
+        if (Auth::id() !== $event->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para editar este evento'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'host_name' => 'required|string|max:255',
+            'location' => 'required|string|max:500',
+            'event_date' => 'required|date',
+            'event_time' => 'required',
+            'type' => 'required|in:boda,cumpleanos,graduacion,corporativo,social,religioso,otro',
+            'payment_type' => 'required|in:gratis,pago',
+            'price' => 'required_if:payment_type,pago|nullable|numeric|min:10',
+            'description' => 'required|string|max:2000',
+            'max_attendees' => 'nullable|integer|min:1',
+            'event_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'additional_images' => 'nullable|array|max:5',
+        ], [
+            'price.min' => 'El precio mínimo es de $10.00 MXN (requisito de Stripe)',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // ⭐ NUEVA VALIDACIÓN: Si cambia a evento de pago, verificar Stripe
+        if ($request->payment_type === 'pago' && $event->payment_type === 'gratis') {
+            // Solo si está CAMBIANDO de gratis a pago
+            $user = Auth::user();
+            if (empty($user->stripe_account_id) || empty($user->stripe_account_verified)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Para convertir el evento a pago, primero debes conectar tu cuenta de Stripe.',
+                    'stripe_required' => true,
+                    'redirect' => route('stripe.connect')
+                ], 403);
+            }
+        }
+
+        // ⭐ VALIDACIÓN: Si ya es de pago, verificar que siga teniendo Stripe activo
+        $user = Auth::user();
+        if ($request->payment_type === 'pago' && (empty($user->stripe_account_id) || empty($user->stripe_account_verified))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tu cuenta de Stripe no está activa. Conéctala nuevamente para eventos de pago.',
+                'stripe_required' => true,
+                'redirect' => route('stripe.connect')
+            ], 403);
+        }
+
+        // Manejar nueva imagen principal si se subió
+        $imagePath = $event->event_image;
+        if ($request->hasFile('event_image')) {
+            if ($event->event_image) {
+                Storage::disk('public')->delete($event->event_image);
+            }
+            $imagePath = $request->file('event_image')->store('event_images', 'public');
+        }
+
+        // Actualizar el evento
+        $event->update([
+            'title' => $request->title,
+            'host_name' => $request->host_name,
+            'location' => $request->location,
+            'event_date' => $request->event_date,
+            'event_time' => $request->event_time,
+            'event_image' => $imagePath,
+            'type' => $request->type,
+            'payment_type' => $request->payment_type,
+            'price' => $request->payment_type === 'pago' ? $request->price : null,
+            'description' => $request->description,
+            'max_attendees' => $request->max_attendees,
+            'is_public' => $request->has('is_public') ? true : false,
+        ]);
+
+        // Manejar imágenes adicionales
+        if ($request->hasFile('additional_images')) {
+            // Eliminar imágenes antiguas de la galería
+            foreach ($event->images as $oldImage) {
+                Storage::disk('public')->delete($oldImage->image_path);
+                $oldImage->delete();
+            }
+
+            // Agregar nuevas imágenes
+            $additionalImages = $request->file('additional_images');
+
+            foreach ($additionalImages as $index => $image) {
+                if ($index >= 5) break;
+
+                $path = $image->store('event_images', 'public');
+
+                EventImage::create([
+                    'event_id' => $event->id,
+                    'image_path' => $path,
+                    'order' => $index + 1,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => '¡Evento actualizado exitosamente!',
+        ]);
+    }
+
+    // Eliminar evento (mantener igual)
+    public function destroy($id)
+    {
+        $event = Event::findOrFail($id);
+
+        if (Auth::id() !== $event->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para eliminar este evento'
+            ], 403);
+        }
+
+        if ($event->event_image) {
+            Storage::disk('public')->delete($event->event_image);
+        }
+
+        // NUEVO: Eliminar imágenes de la galería
+        foreach ($event->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+            $image->delete();
+        }
+
+        $invitations = $event->invitations;
+        foreach ($invitations as $invitation) {
+            if ($invitation->qr_image) {
+                Storage::disk('public')->delete($invitation->qr_image);
+            }
+        }
+
+        $event->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Evento eliminado exitosamente'
+        ]);
     }
 }

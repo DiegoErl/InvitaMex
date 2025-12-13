@@ -60,24 +60,17 @@
                         </div>
                     </div>
                     <ul class="profile-menu-list">
-                        <li>
-                            <a href="{{ route('perfil') }}">
-                                <i class="fas fa-user"></i>
-                                Mi Perfil
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('perfil.edit') }}">
-                                <i class="fas fa-edit"></i>
-                                Editar Perfil
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" onclick="alert('Próximamente')">
-                                <i class="fas fa-calendar-check"></i>
-                                Mis Invitaciones
-                            </a>
-                        </li>
+                        @auth
+                        <li><a href="{{ route('perfil') }}"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                        <li><a href="{{ route('mis-invitaciones') }}"><i class="fas fa-ticket-alt"></i> Mis Invitaciones</a></li>
+
+                        {{-- ⭐ AGREGAR ESTE ENLACE --}}
+                        @if(Auth::user()->hasStripeAccount())
+                        <li><a href="{{ route('earnings.index') }}"><i class="fas fa-dollar-sign"></i> Mis Ingresos</a></li>
+                        @endif
+
+                        <li><a href="{{ route('eventos.create') }}"><i class="fas fa-plus"></i> Crear Evento</a></li>
+                        @endauth
                         <li class="divider"></li>
                         <li>
                             <form action="{{ route('logout') }}" method="POST" id="logoutFormHeader">
@@ -130,6 +123,19 @@
             </ul>
         </div>
     </nav>
+
+    @auth
+    @if (!Auth::user()->hasVerifiedEmail())
+    <div style="background: #fff3cd; color: #856404; padding: 1rem; text-align: center; border-bottom: 2px solid #ffc107;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Tu correo no está verificado.</strong>
+        Tu acceso está limitado hasta que verifiques tu email.
+        <a href="{{ route('verification.notice') }}" style="color: #667eea; text-decoration: underline; font-weight: bold;">
+            Verificar ahora
+        </a>
+    </div>
+    @endif
+    @endauth
 </header>
 
 <style>

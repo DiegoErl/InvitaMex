@@ -412,7 +412,7 @@ function renderListView(events) {
     document.getElementById("eventsGrid").style.display = "none";
 }
 
-// Mostrar vista previa del evento - CORREGIDO
+// Mostrar vista previa del evento - ACTUALIZADO CON GALERÍA
 function showEventPreview(eventId) {
     const event = allEvents.find((e) => e.id === eventId);
     if (!event) return;
@@ -420,10 +420,6 @@ function showEventPreview(eventId) {
     currentEventId = eventId;
 
     // SIEMPRE mostrar primero el modal de detalles
-    document.getElementById("modalHeader").style.background = event.color;
-    document.getElementById("modalHeader").innerHTML = `<i class="${
-        event.icon || "fas fa-calendar-alt"
-    }"></i>`;
     document.getElementById("modalTitle").textContent = event.title;
     document.getElementById("modalOrganizer").textContent = event.organizer;
     document.getElementById("modalDate").textContent = formatFullDate(
@@ -434,7 +430,51 @@ function showEventPreview(eventId) {
     document.getElementById("modalAttendees").textContent = event.attendees;
     document.getElementById("modalDescription").textContent = event.description;
 
-    // Mostrar modal de detalles
+    // ⭐ NUEVO: Mostrar imagen de portada
+    const modalMainImage = document.getElementById("modalMainImage");
+    const modalHeaderImage = document.getElementById("modalHeaderImage");
+
+    if (event.image) {
+        modalMainImage.src = event.image;
+        modalHeaderImage.style.display = "block";
+    } else {
+        modalHeaderImage.style.display = "none";
+    }
+
+    // ⭐ NUEVO: Mostrar galería de imágenes adicionales
+    const modalGallery = document.getElementById("modalGallery");
+    const galleryThumbnails = document.getElementById("galleryThumbnails");
+
+    // Guardar todas las imágenes (portada + galería) globalmente
+    window.currentEventImages = [];
+    if (event.image) {
+        window.currentEventImages.push(event.image);
+    }
+    if (event.gallery_images && event.gallery_images.length > 0) {
+        window.currentEventImages = window.currentEventImages.concat(
+            event.gallery_images
+        );
+    }
+
+    if (event.gallery_images && event.gallery_images.length > 0) {
+        modalGallery.style.display = "block";
+        galleryThumbnails.innerHTML = "";
+
+        event.gallery_images.forEach((imageUrl, index) => {
+            const thumbnail = document.createElement("div");
+            thumbnail.className = "gallery-thumbnail";
+            thumbnail.onclick = () => openImageViewer(index + 1); // +1 porque la portada es índice 0
+            thumbnail.innerHTML = `
+                <img src="${imageUrl}" alt="Imagen ${index + 1}">
+                <div class="gallery-thumbnail-number">${index + 1}</div>
+            `;
+            galleryThumbnails.appendChild(thumbnail);
+        });
+    } else {
+        modalGallery.style.display = "none";
+    }
+
+    // Mostrar modal
     document.getElementById("eventModal").classList.add("show");
     document.body.style.overflow = "hidden";
 }
@@ -910,5 +950,51 @@ document.addEventListener("keydown", function (e) {
         if (paymentModal && paymentModal.style.display === "flex") {
             closePaymentModal();
         }
+    }
+});
+
+
+// VISOR DE IMÁGENES AMPLIADAS .............................................................................................................
+
+
+let currentViewerIndex = 0;
+
+function openImageViewer(index) {
+    if (!window.currentEventImages || window.currentEventImages.length === 0) return;
+    
+    currentViewerIndex = index;
+    const viewerModal = document.getElementById('imageViewerModal');
+    const viewerImage = document.getElementById('viewerImage');
+    const viewerCounter = document.getElementById('viewerCounter');
+    
+    viewerImage.src = window.currentEventImages[currentViewerIndex];
+    viewerCounter.textContent = `${currentViewerIndex + 1} / ${window.currentEventImages.length}`;
+    
+    viewerModal.classList.add('show');
+}
+
+function closeImageViewer() {
+    document.getElementById('imageViewerModal').classList.remove('show');
+}
+
+function changeViewerImage(direction) {
+    const totalImages = window.currentEventImages.length;
+    currentViewerIndex = (currentViewerIndex + direction + totalImages) % totalImages;
+    
+    const viewerImage = document.getElementById('viewerImage');
+    const viewerCounter = document.getElementById('viewerCounter');
+    
+    viewerImage.src = window.currentEventImages[currentViewerIndex];
+    viewerCounter.textContent = `${currentViewerIndex + 1} / ${totalImages}`;
+}
+
+// Cerrar visor con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeImageViewer();
+    } else if (e.key === 'ArrowLeft') {
+        changeViewerImage(-1);
+    } else if (e.key === 'ArrowRight') {
+        changeViewerImage(1);
     }
 });
