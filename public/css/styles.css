@@ -892,3 +892,208 @@ body {
     font-weight: bold;
     border-bottom: 2px solid #b740c7; /* subrayado opcional */
 }
+
+/* ESTILO DE HEADER */
+
+
+    /* Estilos para el menú de perfil */
+
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .logo-img {
+        height: 60px;
+        /* ajusta según tu diseño */
+        width: auto;
+        object-fit: contain;
+    }
+
+
+    .profile-dropdown {
+        position: relative;
+    }
+
+    .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .profile-trigger:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-photo {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+    }
+
+    .profile-avatar-small {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+        border: 2px solid white;
+    }
+
+    .profile-name {
+        color: black;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .profile-trigger i.fa-chevron-down {
+        font-size: 0.7rem;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-trigger.active i.fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .profile-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        min-width: 280px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .profile-menu.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .profile-menu-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .profile-menu-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .profile-menu-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-menu-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        overflow: hidden;
+    }
+
+    .profile-menu-info strong {
+        color: #333;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profile-menu-info small {
+        color: #666;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profile-menu-list {
+        list-style: none;
+        padding: 0.5rem 0;
+        margin: 0;
+    }
+
+    .profile-menu-list li a,
+    .profile-menu-list li button {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        width: 100%;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+        text-align: left;
+    }
+
+    .profile-menu-list li a:hover,
+    .profile-menu-list li button:hover {
+        background: #f8f9fa;
+    }
+
+    .profile-menu-list li a i,
+    .profile-menu-list li button i {
+        width: 20px;
+        color: #667eea;
+    }
+
+    .profile-menu-list li.divider {
+        height: 1px;
+        background: #f0f0f0;
+        margin: 0.5rem 0;
+    }
+
+    .profile-menu-list li:last-child a,
+    .profile-menu-list li:last-child button {
+        color: #dc3545;
+    }
+
+    .profile-menu-list li:last-child i {
+        color: #dc3545;
+    }
+
+    @media (max-width: 768px) {
+        .profile-dropdown {
+            display: none;
+        }
+    }

@@ -1,8 +1,8 @@
 
         // Números de WhatsApp por departamento (reemplazar con números reales)
         const whatsappNumbers = {
-            general: '5215512345678',
-            demo: '5215512345678',
+            general: '5215586715181',
+            demo: '5215586715181',
             soporte: '5215512345679',
             ventas: '5215512345680',
             bugs: '5215512345679',

@@ -998,3 +998,13 @@ document.addEventListener('keydown', function(e) {
         changeViewerImage(1);
     }
 });
+
+
+function viewFullInvitation() {
+    if (!currentEventId) {
+        alert('No hay evento seleccionado');
+        return;
+    }
+
+    window.location.href = `/eventos/${currentEventId}/invitacion`;
+}

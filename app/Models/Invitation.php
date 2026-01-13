@@ -33,4 +33,40 @@ class Invitation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // MÉTODOS HELPER
+    
+    public function isPending()
+    {
+        return $this->status === 'pendiente';
+    }
+
+    public function isConfirmed()
+    {
+        return $this->status === 'confirmado';
+    }
+
+    public function isRejected()
+    {
+        return $this->status === 'rechazado';
+    }
+
+    public function isUsed()
+    {
+        return $this->status === 'usado';
+    }
+
+    public function canBeScanned()
+    {
+        return $this->status === 'confirmado';
+    }
+
+    public function hasRsvpDeadlinePassed()
+    {
+        if (!$this->event->rsvp_deadline) {
+            return false; // No hay deadline
+        }
+        
+        return now()->isAfter($this->event->rsvp_deadline);
+    }
 }

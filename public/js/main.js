@@ -444,26 +444,26 @@
         });
 
         // Add loading states for interactive elements
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('click', function(e) {
-                // Don't prevent default for anchor tags with href
-                if (this.tagName === 'A' && this.getAttribute('href').startsWith('#')) {
-                    return;
-                }
+        // document.querySelectorAll('.btn').forEach(button => {
+        //     button.addEventListener('click', function(e) {
+        //         // Don't prevent default for anchor tags with href
+        //         if (this.tagName === 'A' && this.getAttribute('href').startsWith('#')) {
+        //             return;
+        //         }
                 
-                e.preventDefault();
+        //         e.preventDefault();
                 
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
-                this.disabled = true;
+        //         const originalText = this.innerHTML;
+        //         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+        //         this.disabled = true;
                 
-                // Simulate loading
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                }, 2000);
-            });
-        });
+        //         // Simulate loading
+        //         setTimeout(() => {
+        //             this.innerHTML = originalText;
+        //             this.disabled = false;
+        //         }, 2000);
+        //     });
+        // });
 
         console.log('🚀 EventosPro Landing Page initialized successfully!');
         console.log('📱 Features loaded:');

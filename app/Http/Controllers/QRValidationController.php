@@ -41,6 +41,36 @@ class QRValidationController extends Controller
             ], 404);
         }
 
+        // ⭐ NUEVA VALIDACIÓN: Verificar si está PENDIENTE
+        if ($invitation->status === 'pendiente') {
+            return response()->json([
+                'success' => false,
+                'message' => '⏳ Esta invitación aún no ha sido confirmada por el usuario',
+                'status' => 'pending',
+                'invitation' => [
+                    'user_name' => $invitation->user->firstName . ' ' . $invitation->user->lastName,
+                    'user_email' => $invitation->user->email,
+                    'event_name' => $invitation->event->title,
+                    'status' => 'pendiente'
+                ]
+            ], 400);
+        }
+
+        // ⭐ NUEVA VALIDACIÓN: Verificar si está RECHAZADA
+        if ($invitation->status === 'rechazado') {
+            return response()->json([
+                'success' => false,
+                'message' => '❌ Esta invitación fue rechazada por el usuario',
+                'status' => 'rejected',
+                'invitation' => [
+                    'user_name' => $invitation->user->firstName . ' ' . $invitation->user->lastName,
+                    'user_email' => $invitation->user->email,
+                    'event_name' => $invitation->event->title,
+                    'status' => 'rechazado'
+                ]
+            ], 400);
+        }
+
         // Verificar si ya fue usado
         if ($invitation->status === 'usado') {
             return response()->json([
@@ -64,7 +94,20 @@ class QRValidationController extends Controller
             ], 400);
         }
 
-        // Marcar como usado
+        // ⭐ VALIDACIÓN ADICIONAL: Solo permitir escaneo si está CONFIRMADO
+        if ($invitation->status !== 'confirmado') {
+            return response()->json([
+                'success' => false,
+                'message' => '❌ Esta invitación no está confirmada',
+                'status' => 'not_confirmed',
+                'invitation' => [
+                    'user_name' => $invitation->user->firstName . ' ' . $invitation->user->lastName,
+                    'current_status' => $invitation->status
+                ]
+            ], 400);
+        }
+
+        // ✅ TODO CORRECTO - Marcar como usado
         $invitation->status = 'usado';
         $invitation->used_at = now();
         $invitation->save();
@@ -79,10 +122,39 @@ class QRValidationController extends Controller
                 'event_name' => $invitation->event->title,
                 'event_date' => $invitation->event->event_date->format('d/m/Y'),
                 'event_time' => $invitation->event->event_time->format('H:i'),
-                'confirmed_at' => $invitation->confirmed_at->format('d/m/Y H:i'),
+                'confirmed_at' => $invitation->confirmed_at ? $invitation->confirmed_at->format('d/m/Y H:i') : 'No confirmado',
                 'used_at' => $invitation->used_at->format('d/m/Y H:i'),
             ]
         ], 200);
+    }
+
+    // ⭐ NUEVO: Obtener estadísticas de escaneo del evento
+    public function getEventStats($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+        
+        // Verificar permisos
+        if (Auth::id() !== $event->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No autorizado'
+            ], 403);
+        }
+        
+        // Contar invitaciones por estado
+        $stats = [
+            'total' => Invitation::where('event_id', $eventId)->count(),
+            'usado' => Invitation::where('event_id', $eventId)->where('status', 'usado')->count(),
+            'confirmado' => Invitation::where('event_id', $eventId)->where('status', 'confirmado')->count(),
+            'pendiente' => Invitation::where('event_id', $eventId)->where('status', 'pendiente')->count(),
+            'rechazado' => Invitation::where('event_id', $eventId)->where('status', 'rechazado')->count(),
+            'cancelado' => Invitation::where('event_id', $eventId)->where('status', 'cancelado')->count(),
+        ];
+        
+        return response()->json([
+            'success' => true,
+            'stats' => $stats
+        ]);
     }
 
     // Ver historial de QR escaneados para un evento

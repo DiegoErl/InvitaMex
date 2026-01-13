@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InvitaMex </title>
+    <title>InvitaCleth </title>
 
     <!-- Estilos externos -->
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
@@ -33,7 +33,7 @@
                     ¡Tu evento, tu estilo!
                 </p>
                 <div class="hero-buttons">
-                    <a href="#create-event" class="btn btn-primary">
+                    <a href="{{ route('crear.invitacion') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i>
                         Crear Invitación
                     </a>
@@ -130,15 +130,15 @@
                 </div>
 
                 <div class="feature-card animate-on-scroll">
-        <div class="feature-icon">
-            <i class="fas fa-palette"></i>
-        </div>
-        <h3 class="feature-title">Diseños Personalizables</h3>
-        <p class="feature-description">
-            Elige entre múltiples plantillas elegantes y personaliza cada
-            detalle: colores, fuentes, imágenes y animaciones para reflejar tu estilo único.
-        </p>
-    </div>
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="feature-title">Diseños Personalizables</h3>
+                    <p class="feature-description">
+                        Elige entre múltiples plantillas elegantes y personaliza cada
+                        detalle: colores, fuentes, imágenes y animaciones para reflejar tu estilo único.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -174,7 +174,7 @@
                 y ecológica de invitar a sus eventos especiales.
             </p>
             <div class="cta-buttons">
-                <a href="#signup" class="btn btn-primary">
+                <a href="{{ route('crear.invitacion') }}" class="btn btn-primary">
                     <i class="fas fa-rocket"></i>
                     Comenzar Gratis
                 </a>

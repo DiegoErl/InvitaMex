@@ -14,7 +14,7 @@ class LoginController extends Controller
         if (Auth::check()) {
             return redirect()->route('perfil');
         }
-        
+
         return view('login');
     }
 
@@ -59,13 +59,22 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        $wasSuspended = Auth::check() && !Auth::user()->is_active;
+
         Auth::logout();
-        
+
         // Invalidar la sesión completamente
         $request->session()->invalidate();
-        
+
         // Regenerar el token CSRF
         $request->session()->regenerateToken();
+
+        if ($wasSuspended) {
+            return redirect()->route('login')
+                ->with('error', 'Tu cuenta ha sido suspendida. Contacta a soporte para más información.');
+        }
+
+        return redirect()->route('home');
 
         // Redirigir al login con headers para prevenir cache
         return redirect()->route('login')

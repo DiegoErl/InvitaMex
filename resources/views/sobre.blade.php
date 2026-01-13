@@ -214,7 +214,7 @@
             </section>
 
             <!-- CONTACT CTA -->
-            <section class="contact-cta">
+            <!-- <section class="contact-cta">
                 <h2>¿Quieres Conocer Más?</h2>
                 <p>
                     Estamos siempre abiertos a conversar sobre nuestra misión, tecnología 
@@ -227,7 +227,7 @@
                     </a>
                     
                 </div>
-            </section>
+            </section> -->
         </div>
     </main>
 

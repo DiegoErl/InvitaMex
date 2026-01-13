@@ -57,10 +57,10 @@
                                 <i class="fab fa-whatsapp"></i>
                                 Chatear Ahora
                             </a>
-                            <a href="#" class="method-action primary-btn" onclick="contactWhatsApp('demo')">
+                            <!-- <a href="#" class="method-action primary-btn" onclick="contactWhatsApp('demo')">
                                 <i class="fas fa-play"></i>
                                 Solicitar Demo
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                     
@@ -75,7 +75,7 @@
                             Tiempo de respuesta promedio: 24 horas en días hábiles.
                         </p>
                         <div>
-                            <a href="mailto:hola@eventospro.com" class="method-action email-btn">
+                            <a href="mailto:invitacleth@gmail.com" class="method-action email-btn">
                                 <i class="fas fa-envelope"></i>
                                 Enviar Email
                             </a>
@@ -108,7 +108,7 @@
             </section>
 
             <!-- CONTACT FORM SECTION -->
-            <section class="contact-form-section">
+            <!-- <section class="contact-form-section">
                 <div class="form-container">
                     <div class="form-header">
                         <h2>Formulario de Contacto</h2>
@@ -181,7 +181,7 @@
                         </button>
                     </form>
                 </div>
-            </section>
+            </section> -->
 
             <!-- FAQ SECTION -->
             <section class="faq-section">
@@ -207,7 +207,7 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="faq-answer">
-                            <p>Ofrecemos un plan gratuito con características básicas que incluye hasta 3 eventos por mes y 50 invitados por evento. También tenemos planes premium con funciones avanzadas, plantillas exclusivas y soporte prioritario.</p>
+                            <p>Ofrecemos lo basico para que cualquier persona pueda publicar un evento personalizado en nuestra plataforma de manera gratuita, sin embargo, si el cliente desea crear un evento de paga necesitara crearse una cuenta de Stripe de manera obligatoria para que el organizador pueda recolectar sus ganancias directamente a su cuenta de banco de manera automatica</p>
                         </div>
                     </div>
                     
@@ -217,7 +217,7 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="faq-answer">
-                            <p>¡Absolutamente! Puedes subir tus propias imágenes, logos y elementos gráficos. Soportamos formatos JPG, PNG y SVG. También ofrecemos una biblioteca de imágenes profesionales gratuitas.</p>
+                            <p>¡Absolutamente! Puedes subir tus propias imágenes, logos y elementos gráficos. Soportamos formatos JPG, PNG y gif! </p>
                         </div>
                     </div>
                     
@@ -227,7 +227,7 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="faq-answer">
-                            <p>Cada invitación genera automáticamente un código QR único. Los invitados pueden escanearlo con cualquier teléfono para acceder directamente al evento, ver detalles, confirmar asistencia y agregar el evento a su calendario.</p>
+                            <p>Cada invitación genera automáticamente un código QR único. Los organizadores podran escanear su codigo para poder hacer valida su invitacion de manera automatica y segura sin que puedan replicarla.</p>
                         </div>
                     </div>
                     
@@ -237,17 +237,17 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="faq-answer">
-                            <p>Sí, todo nuestro equipo habla español nativo. Ofrecemos soporte completo en español por WhatsApp, email y chat en vivo. Nuestros horarios de atención son de lunes a viernes de 9:00 AM a 8:00 PM (horario de México).</p>
+                            <p>Sí, todo nuestro equipo habla español nativo. Ofrecemos soporte completo en español por WhatsApp e email. Nuestros horarios de atención son de lunes a viernes de 9:00 AM a 8:00 PM (horario de México).</p>
                         </div>
                     </div>
                     
                     <div class="faq-item animate-on-scroll">
                         <button class="faq-question" onclick="toggleFAQ(this)">
-                            <span>¿Puedo exportar la lista de asistentes?</span>
+                            <span>¿Puedo editar mis eventos en caso de que me equivoque?</span>
                             <i class="fas fa-chevron-down"></i>
                         </button>
                         <div class="faq-answer">
-                            <p>¡Por supuesto! Puedes exportar la lista completa de asistentes en formato Excel (CSV) con todos los detalles: nombres, emails, estados de confirmación, fechas de respuesta y códigos QR únicos.</p>
+                            <p>¡Por supuesto! Puedes volver a editar tus eventos una vez que ya hayan sido publicados en caso de que te hayas equivocado.</p>
                         </div>
                     </div>
                 </div>

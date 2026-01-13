@@ -151,6 +151,20 @@
                             <span class="info-label">Nombre completo</span>
                             <span class="info-value">{{ Auth::user()->firstName }} {{ Auth::user()->lastName }}</span>
                         </div>
+                        <h1>
+                            {{ Auth::user()->firstName }} {{ Auth::user()->lastName }}
+                            @if(Auth::user()->isAdmin())
+                            <!-- <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                         color: white; 
+                                         padding: 4px 12px; 
+                                         border-radius: 20px; 
+                                         font-size: 0.8rem; 
+                                         font-weight: 600;
+                                         margin-left: 10px;">
+                                <i class="fas fa-crown"></i> ADMIN
+                            </span> -->
+                            @endif
+                        </h1>
                         <div class="info-row">
                             <span class="info-label">Correo electrónico</span>
                             <span class="info-value">{{ Auth::user()->email }}</span>
@@ -250,6 +264,16 @@
                             </div>
                             <h3>Mis Ingresos</h3>
                             <p>Ver ganancias y estadísticas</p>
+                        </a>
+                        @endif
+
+                        @if(Auth::user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="action-card primary">
+                            <div class="action-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>Panel de Administración</h3>
+                            <p>Gestiona usuarios y eventos del sistema</p>
                         </a>
                         @endif
                     </div>

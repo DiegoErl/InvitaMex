@@ -11,38 +11,9 @@
             }
         });
 
-        // Back to top button
-        const backToTopButton = document.getElementById('backToTop');
         
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.add('visible');
-            } else {
-                backToTopButton.classList.remove('visible');
-            }
-        });
 
-        backToTopButton.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // Mobile menu toggle
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-        const mobileMenu = document.querySelector('.mobile-menu');
         
-        mobileMenuToggle.addEventListener('click', function() {
-            mobileMenu.style.display = mobileMenu.style.display === 'block' ? 'none' : 'block';
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!mobileMenuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
-                mobileMenu.style.display = 'none';
-            }
-        });
 
         // Animate elements on scroll
         const observerOptions = {
@@ -176,24 +147,7 @@
             }
         }
 
-        // Search functionality
-        const searchBox = document.querySelector('.search-box');
-        searchBox.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            if (searchTerm.length > 2) {
-                console.log('Buscando:', searchTerm);
-            }
-        });
-
-        searchBox.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const searchTerm = this.value.trim();
-                if (searchTerm) {
-                    window.location.href = `#search?q=${encodeURIComponent(searchTerm)}`;
-                }
-            }
-        });
+        
 
         // Form input validation styling
         document.querySelectorAll('.form-input').forEach(input => {

@@ -122,6 +122,17 @@ class EventController extends Controller
             'max_attendees' => $request->max_attendees,
             'is_public' => $request->has('is_public') ? true : false,
             'status' => $request->status ?? 'borrador',
+
+            // ⭐ NUEVOS CAMPOS DE DISEÑO
+            'template_id' => $request->template_id ?? 'basica',
+            'primary_color' => $request->primary_color ?? '#667eea',
+            'secondary_color' => $request->secondary_color ?? '#764ba2',
+            'background_color' => $request->background_color ?? '#ffffff',
+            'font_family' => $request->font_family ?? 'Inter',
+            'font_size' => $request->font_size ?? 'medium',
+
+            // ⭐ AGREGAR ESTE CAMPO SI NO ESTÁ
+            'rsvp_deadline' => $request->rsvp_deadline, // ⭐ NUEVO
         ]);
 
         // ⭐ Manejar imágenes adicionales de la galería (máximo 5)
@@ -196,13 +207,13 @@ class EventController extends Controller
         // Generar código QR único
         $qrCode = Str::uuid()->toString();
 
-        // Crear invitación primero
+        // Crear invitación PENDIENTE (no confirmada)
         $invitation = Invitation::create([
             'event_id' => $event->id,
             'user_id' => $user->id,
             'qr_code' => $qrCode,
-            'status' => 'confirmado',
-            'confirmed_at' => now(),
+            'status' => 'pendiente', // ⭐ CAMBIADO DE 'confirmado' A 'pendiente'
+            'confirmed_at' => null, // ⭐ NO se confirma automáticamente
         ]);
 
         try {
@@ -237,7 +248,7 @@ class EventController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => '¡Invitación confirmada! Tu código QR ha sido generado',
+                'message' => '¡Invitación generada! Debes confirmar tu asistencia desde "Mis Invitaciones"', // ⭐ MENSAJE ACTUALIZADO
                 'invitation' => $invitation,
                 'qr_url' => asset('storage/' . $qrPath)
             ], 201);
@@ -328,7 +339,17 @@ class EventController extends Controller
                 })->toArray(),
                 'status' => $this->getEventStatus($event->event_date),
                 'color' => $this->getEventColor($event->type),
-                'icon' => $this->getEventIcon($event->type)
+                'icon' => $this->getEventIcon($event->type),
+
+                // ⭐ NUEVOS CAMPOS DE DISEÑO
+                'design' => [
+                    'template_id' => $event->template_id ?? 'basica',
+                    'primary_color' => $event->primary_color ?? '#667eea',
+                    'secondary_color' => $event->secondary_color ?? '#764ba2',
+                    'background_color' => $event->background_color ?? '#ffffff',
+                    'font_family' => $event->font_family ?? 'Inter',
+                    'font_size' => $event->font_size ?? 'medium',
+                ]
             ];
         });
 
@@ -531,6 +552,201 @@ class EventController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Evento eliminado exitosamente'
+        ]);
+    }
+
+    public function showInvitation($id)
+    {
+        $event = Event::with(['user', 'confirmedInvitations', 'images'])->findOrFail($id);
+
+        // Verificar que el evento sea público o el usuario sea el organizador
+        if (!$event->is_public && (!Auth::check() || Auth::id() !== $event->user_id)) {
+            abort(403, 'No tienes permiso para ver este evento');
+        }
+
+        return view('evento-invitacion', compact('event'));
+    }
+
+    // ============================================
+    // SISTEMA RSVP - CONFIRMAR/RECHAZAR INVITACIÓN
+    // ============================================
+
+    public function confirmRsvp(Request $request, $invitationId)
+    {
+        $invitation = Invitation::with('event')->findOrFail($invitationId);
+
+        // Verificar que la invitación pertenece al usuario autenticado
+        if ($invitation->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para modificar esta invitación'
+            ], 403);
+        }
+
+        // Verificar que no esté ya confirmada o rechazada
+        if ($invitation->status === 'confirmado') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ya has confirmado tu asistencia a este evento'
+            ], 400);
+        }
+
+        if ($invitation->status === 'rechazado') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ya has rechazado esta invitación'
+            ], 400);
+        }
+
+        // ⭐ NUEVA VALIDACIÓN: Verificar si pasó la fecha límite
+        if ($invitation->event->rsvp_deadline && now()->isAfter($invitation->event->rsvp_deadline)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La fecha límite para confirmar asistencia ha expirado el ' .
+                    $invitation->event->rsvp_deadline->format('d/m/Y H:i')
+            ], 400);
+        }
+
+        // Confirmar asistencia
+        $invitation->update([
+            'status' => 'confirmado',
+            'confirmed_at' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => '¡Asistencia confirmada! Tu código QR ahora es válido para el evento.'
+        ]);
+    }
+
+
+    public function rejectRsvp(Request $request, $invitationId)
+    {
+        $invitation = Invitation::with('event')->findOrFail($invitationId);
+
+        // Verificar que la invitación pertenece al usuario autenticado
+        if ($invitation->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para modificar esta invitación'
+            ], 403);
+        }
+
+        // Verificar que no esté ya rechazada
+        if ($invitation->status === 'rechazado') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ya has rechazado esta invitación'
+            ], 400);
+        }
+
+        // ⭐ PERMITIR RECHAZAR INCLUSO SI PASÓ EL DEADLINE
+        // (Es válido que alguien rechace tarde)
+
+        // Rechazar invitación
+        $invitation->update([
+            'status' => 'rechazado',
+            'confirmed_at' => null
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Invitación rechazada. Tu código QR ya no es válido.'
+        ]);
+    }
+
+    // ============================================
+    // VER LISTA DE ASISTENTES (ORGANIZADOR)
+    // ============================================
+
+    public function showAttendees($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+
+        // Verificar que el usuario sea el organizador
+        if ($event->user_id !== Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para ver los asistentes de este evento'
+            ], 403);
+        }
+
+        // ⭐ CARGAR TODOS LOS ESTADOS INCLUYENDO "USADO"
+        $usados = Invitation::where('event_id', $eventId)
+            ->where('status', 'usado')
+            ->with('user')
+            ->get();
+
+        $confirmados = Invitation::where('event_id', $eventId)
+            ->where('status', 'confirmado')
+            ->with('user')
+            ->get();
+
+        $pendientes = Invitation::where('event_id', $eventId)
+            ->where('status', 'pendiente')
+            ->with('user')
+            ->get();
+
+        $rechazados = Invitation::where('event_id', $eventId)
+            ->where('status', 'rechazado')
+            ->with('user')
+            ->get();
+
+        $attendees = [
+            'usados' => $usados->map(function ($inv) {
+                return [
+                    'id' => $inv->id,
+                    'name' => $inv->user->firstName . ' ' . $inv->user->lastName,
+                    'email' => $inv->user->email,
+                    'confirmed_at' => $inv->confirmed_at ? $inv->confirmed_at->format('d/m/Y H:i') : null,
+                    'used_at' => $inv->used_at ? $inv->used_at->format('d/m/Y H:i') : null,
+                    'status' => 'usado'
+                ];
+            }),
+            'confirmados' => $confirmados->map(function ($inv) {
+                return [
+                    'id' => $inv->id,
+                    'name' => $inv->user->firstName . ' ' . $inv->user->lastName,
+                    'email' => $inv->user->email,
+                    'confirmed_at' => $inv->confirmed_at ? $inv->confirmed_at->format('d/m/Y H:i') : null,
+                    'status' => 'confirmado'
+                ];
+            }),
+            'pendientes' => $pendientes->map(function ($inv) {
+                return [
+                    'id' => $inv->id,
+                    'name' => $inv->user->firstName . ' ' . $inv->user->lastName,
+                    'email' => $inv->user->email,
+                    'created_at' => $inv->created_at->format('d/m/Y H:i'),
+                    'status' => 'pendiente'
+                ];
+            }),
+            'rechazados' => $rechazados->map(function ($inv) {
+                return [
+                    'id' => $inv->id,
+                    'name' => $inv->user->firstName . ' ' . $inv->user->lastName,
+                    'email' => $inv->user->email,
+                    'status' => 'rechazado'
+                ];
+            })
+        ];
+
+        return response()->json([
+            'success' => true,
+            'event' => [
+                'title' => $event->title,
+                'date' => $event->event_date->format('d/m/Y'),
+                'time' => $event->event_time->format('H:i'),
+                'rsvp_deadline' => $event->rsvp_deadline ? $event->rsvp_deadline->format('d/m/Y H:i') : null
+            ],
+            'counts' => [
+                'usados' => $usados->count(), // ⭐ NUEVO
+                'confirmados' => $confirmados->count(),
+                'pendientes' => $pendientes->count(),
+                'rechazados' => $rechazados->count(),
+                'total' => $event->invitations->count()
+            ],
+            'attendees' => $attendees
         ]);
     }
 }

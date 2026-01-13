@@ -15,9 +15,15 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\ForceNgrokUrl::class,
         ]);
         
+        // después de StartSession
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckUserActive::class,
+        ]);
+        
         $middleware->alias([
             'prevent-back' => \App\Http\Middleware\PreventBackHistory::class,
-            'verified.stripe' => \App\Http\Middleware\VerifyStripeAccount::class, // ⭐ AGREGA ESTO
+            'verified.stripe' => \App\Http\Middleware\VerifyStripeAccount::class,
+            'admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

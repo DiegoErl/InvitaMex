@@ -410,3 +410,423 @@ async function submitForm(status) {
         button.innerHTML = originalText;
     }
 }
+
+
+// ============================================
+// SISTEMA DE PLANTILLAS Y PERSONALIZACIÓN
+// Agregar al final de crearEvento.js
+// ============================================
+
+// Definición de plantillas con sus colores y fuentes predefinidos
+const templatePresets = {
+    // Bodas
+    'boda-elegante': {
+        primary: '#ffd700',
+        secondary: '#ffed4e',
+        background: '#fffdf0',
+        font: 'Playfair Display'
+    },
+    'boda-romantica': {
+        primary: '#ff6b9d',
+        secondary: '#ffc3d7',
+        background: '#fff5f8',
+        font: 'Dancing Script'
+    },
+    'boda-moderna': {
+        primary: '#2c3e50',
+        secondary: '#3498db',
+        background: '#ecf0f1',
+        font: 'Montserrat'
+    },
+    'boda-vintage': {
+        primary: '#d4a574',
+        secondary: '#e6c896',
+        background: '#faf8f3',
+        font: 'Lora'
+    },
+    
+    // Cumpleaños
+    'cumple-festivo': {
+        primary: '#ff6b6b',
+        secondary: '#feca57',
+        background: '#fff9f0',
+        font: 'Inter'
+    },
+    'cumple-infantil': {
+        primary: '#74b9ff',
+        secondary: '#a29bfe',
+        background: '#f5f7ff',
+        font: 'Montserrat'
+    },
+    'cumple-elegante': {
+        primary: '#6c5ce7',
+        secondary: '#a29bfe',
+        background: '#f8f7ff',
+        font: 'Playfair Display'
+    },
+    
+    // XV Años
+    'xv-princesa': {
+        primary: '#ff9ff3',
+        secondary: '#feca57',
+        background: '#fff9fd',
+        font: 'Dancing Script'
+    },
+    'xv-moderna': {
+        primary: '#48dbfb',
+        secondary: '#0abde3',
+        background: '#f0fcff',
+        font: 'Raleway'
+    },
+    'xv-elegante': {
+        primary: '#341f97',
+        secondary: '#ee5a6f',
+        background: '#fdf5f7',
+        font: 'Playfair Display'
+    },
+    
+    // Generales
+    'basica': {
+        primary: '#667eea',
+        secondary: '#764ba2',
+        background: '#ffffff',
+        font: 'Inter'
+    },
+    'colorida': {
+        primary: '#f093fb',
+        secondary: '#4facfe',
+        background: '#fdfbff',
+        font: 'Inter'
+    },
+    'minimalista': {
+        primary: '#2c3e50',
+        secondary: '#95a5a6',
+        background: '#ecf0f1',
+        font: 'Raleway'
+    }
+};
+
+// Mostrar plantillas según el tipo de evento seleccionado
+document.getElementById('type').addEventListener('change', function(e) {
+    const selectedType = e.target.value;
+    
+    // Ocultar todas las categorías
+    document.querySelectorAll('.template-category').forEach(cat => {
+        cat.style.display = 'none';
+    });
+    
+    // Mostrar categoría correspondiente
+    const categoryMap = {
+        'boda': 'boda',
+        'cumpleanos': 'cumpleanos',
+        'graduacion': 'xv', // Reutilizar plantillas elegantes
+        'corporativo': 'general',
+        'social': 'general',
+        'religioso': 'general',
+        'otro': 'general'
+    };
+    
+    const categoryToShow = categoryMap[selectedType] || 'general';
+    const categoryElement = document.querySelector(`[data-type="${categoryToShow}"]`);
+    
+    if (categoryElement) {
+        categoryElement.style.display = 'block';
+    }
+    
+    // Siempre mostrar plantillas generales
+    document.querySelector('[data-type="general"]').style.display = 'block';
+});
+
+// Seleccionar plantilla
+function selectTemplate(templateId) {
+    // Remover clase active de todas las plantillas
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    
+    // Agregar clase active a la seleccionada
+    const selectedCard = document.querySelector(`[data-template="${templateId}"]`);
+    if (selectedCard) {
+        selectedCard.classList.add('active');
+    }
+    
+    // Guardar en input hidden
+    document.getElementById('template_id').value = templateId;
+    
+    // Aplicar preset de colores y fuente
+    if (templatePresets[templateId]) {
+        const preset = templatePresets[templateId];
+        applyColorPreset(preset.primary, preset.secondary, preset.background);
+        selectFont(preset.font);
+    }
+}
+
+// Aplicar preset de colores
+function applyColorPreset(primary, secondary, background) {
+    // Actualizar color pickers
+    document.getElementById('primary_color').value = primary;
+    document.getElementById('primary_hex').value = primary;
+    
+    document.getElementById('secondary_color').value = secondary;
+    document.getElementById('secondary_hex').value = secondary;
+    
+    document.getElementById('background_color').value = background;
+    document.getElementById('background_hex').value = background;
+    
+    // Actualizar preview
+    updatePreviewColors();
+}
+
+// Sincronizar color picker con input de texto
+function syncColorPicker(type) {
+    const hexInput = document.getElementById(`${type}_hex`);
+    const colorInput = document.getElementById(`${type}_color`);
+    
+    let hexValue = hexInput.value.trim();
+    
+    // Agregar # si no lo tiene
+    if (!hexValue.startsWith('#')) {
+        hexValue = '#' + hexValue;
+    }
+    
+    // Validar formato hexadecimal
+    if (/^#[0-9A-F]{6}$/i.test(hexValue)) {
+        colorInput.value = hexValue;
+        hexInput.value = hexValue;
+        updatePreviewColors();
+    } else {
+        // Restaurar valor anterior si es inválido
+        hexInput.value = colorInput.value;
+    }
+}
+
+// Actualizar colores en el preview
+function updatePreviewColors() {
+    const primary = document.getElementById('primary_color').value;
+    const secondary = document.getElementById('secondary_color').value;
+    const background = document.getElementById('background_color').value;
+    
+    // Actualizar inputs de texto
+    document.getElementById('primary_hex').value = primary;
+    document.getElementById('secondary_hex').value = secondary;
+    document.getElementById('background_hex').value = background;
+    
+    // Aplicar al preview de tarjeta
+    const cardPreview = document.querySelector('.event-card-preview');
+    if (cardPreview) {
+        cardPreview.style.background = background;
+        
+        // Actualizar gradiente de imagen si no hay imagen cargada
+        const cardImage = document.getElementById('previewCardImage');
+        if (cardImage && !cardImage.querySelector('img')) {
+            cardImage.style.background = `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`;
+        }
+        
+        // Actualizar iconos y detalles
+        document.querySelectorAll('.preview-detail-icon').forEach(icon => {
+            icon.style.background = `rgba(${hexToRgb(primary)}, 0.1)`;
+            icon.style.color = primary;
+        });
+        
+        // Actualizar botón
+        const cardBtn = document.querySelector('.preview-card-btn');
+        if (cardBtn) {
+            cardBtn.style.background = `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`;
+        }
+    }
+    
+    // Aplicar al preview de lista
+    const listImage = document.getElementById('previewListImage');
+    if (listImage && !listImage.querySelector('img')) {
+        listImage.style.background = `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`;
+    }
+}
+
+// Convertir hex a RGB
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+        `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` 
+        : '102, 126, 234';
+}
+
+// Seleccionar fuente
+function selectFont(fontName) {
+    // Remover clase active de todas las fuentes
+    document.querySelectorAll('.font-option').forEach(option => {
+        option.classList.remove('active');
+    });
+    
+    // Agregar clase active a la seleccionada
+    const selectedOption = Array.from(document.querySelectorAll('.font-option'))
+        .find(option => option.querySelector('.font-name').textContent === fontName 
+                     || option.querySelector('.font-preview').style.fontFamily.includes(fontName));
+    
+    if (selectedOption) {
+        selectedOption.classList.add('active');
+    }
+    
+    // Guardar en input hidden
+    document.getElementById('font_family').value = fontName;
+    
+    // Aplicar al preview
+    updatePreviewFont();
+}
+
+// Actualizar fuente en el preview
+function updatePreviewFont() {
+    const fontFamily = document.getElementById('font_family').value;
+    
+    // Aplicar fuente al título
+    document.querySelectorAll('.preview-card-title').forEach(title => {
+        title.style.fontFamily = `'${fontFamily}', sans-serif`;
+    });
+}
+
+// Actualizar tamaño en el preview
+function updatePreviewSize() {
+    const selectedSize = document.querySelector('input[name="font_size"]:checked').value;
+    
+    const cardPreview = document.querySelector('.event-card-preview');
+    if (cardPreview) {
+        // Remover clases anteriores
+        cardPreview.classList.remove('font-small', 'font-medium', 'font-large');
+        // Agregar nueva clase
+        cardPreview.classList.add(`font-${selectedSize}`);
+    }
+    
+    // Aplicar tamaños específicos
+    const title = document.getElementById('previewTitle');
+    const content = document.querySelector('.preview-card-content');
+    
+    if (title) {
+        const sizes = {
+            'small': '1.5rem',
+            'medium': '1.8rem',
+            'large': '2.2rem'
+        };
+        title.style.fontSize = sizes[selectedSize];
+    }
+    
+    if (content) {
+        const contentSizes = {
+            'small': '0.85rem',
+            'medium': '0.95rem',
+            'large': '1.05rem'
+        };
+        content.style.fontSize = contentSizes[selectedSize];
+    }
+}
+
+// ============================================
+// ACTUALIZAR FUNCIÓN submitForm PARA INCLUIR DISEÑO
+// Reemplazar la función existente
+// ============================================
+
+async function submitForm(status) {
+    const form = document.getElementById("createEventForm");
+    const storeUrl = form.dataset.storeUrl;
+    const csrfToken = form.querySelector('input[name="_token"]').value;
+
+    // Limpiar errores previos
+    document.querySelectorAll(".field-error").forEach((el) => {
+        el.textContent = "";
+        el.classList.remove("show");
+    });
+
+    const formData = new FormData(form);
+    formData.set("status", status);
+
+    // ⭐ Agregar datos de diseño (ya están en el form pero aseguramos que se envíen)
+    formData.set("template_id", document.getElementById("template_id").value);
+    formData.set("primary_color", document.getElementById("primary_color").value);
+    formData.set("secondary_color", document.getElementById("secondary_color").value);
+    formData.set("background_color", document.getElementById("background_color").value);
+    formData.set("font_family", document.getElementById("font_family").value);
+    
+    const selectedFontSize = document.querySelector('input[name="font_size"]:checked');
+    if (selectedFontSize) {
+        formData.set("font_size", selectedFontSize.value);
+    }
+
+    // Agregar archivos de la galería
+    formData.delete("additional_images[]");
+    galleryFiles.forEach((file, index) => {
+        formData.append("additional_images[]", file);
+    });
+
+    const button =
+        status === "borrador"
+            ? document.getElementById("saveAsDraftBtn")
+            : document.getElementById("publishBtn");
+    const originalText = button.innerHTML;
+
+    // Deshabilitar botones
+    document.getElementById("saveAsDraftBtn").disabled = true;
+    document.getElementById("publishBtn").disabled = true;
+    button.innerHTML =
+        '<i class="fas fa-spinner fa-spin"></i> ' +
+        (status === "borrador" ? "Guardando..." : "Publicando...");
+
+    try {
+        const response = await fetch(storeUrl, {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": csrfToken,
+                Accept: "application/json",
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(data.message);
+            window.location.href = data.redirect;
+        } else {
+            if (data.message && data.redirect) {
+                const goToStripe = confirm(
+                    data.message +
+                        "\n\n¿Deseas conectar tu cuenta de Stripe ahora?"
+                );
+                if (goToStripe) {
+                    window.location.href = data.redirect;
+                }
+            } else if (data.errors) {
+                for (let field in data.errors) {
+                    const errorElement = document.getElementById(field + "Error");
+                    if (errorElement) {
+                        errorElement.textContent = data.errors[field][0];
+                        errorElement.classList.add("show");
+                    }
+                }
+
+                const firstError = document.querySelector(".field-error.show");
+                if (firstError) {
+                    firstError.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Hubo un error al procesar tu solicitud. Por favor, intenta de nuevo.");
+    } finally {
+        document.getElementById("saveAsDraftBtn").disabled = false;
+        document.getElementById("publishBtn").disabled = false;
+        button.innerHTML = originalText;
+    }
+}
+
+// ============================================
+// INICIALIZACIÓN AL CARGAR LA PÁGINA
+// ============================================
+
+// Seleccionar plantilla básica por defecto
+document.addEventListener('DOMContentLoaded', function() {
+    selectTemplate('basica');
+    selectFont('Inter');
+    updatePreviewColors();
+});

@@ -7,455 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Mis Invitaciones y Eventos - InvitaCleth</title>
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/misInvitaciones.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        html,
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding-top: 100px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            flex: 1;
-        }
-
-        .page-header {
-            text-align: center;
-            color: white;
-            margin-bottom: 2rem;
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .page-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* Pestañas deslizantes */
-        .tabs-container {
-            background: white;
-            border-radius: 25px;
-            padding: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .tabs {
-            display: flex;
-            position: relative;
-            background: #f0f0f0;
-            border-radius: 20px;
-            padding: 0.5rem;
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 1rem 2rem;
-            border: none;
-            background: transparent;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-        }
-
-        .tab-button.active {
-            color: white;
-        }
-
-        .tab-slider {
-            position: absolute;
-            top: 0.5rem;
-            left: 0.5rem;
-            height: calc(100% - 1rem);
-            width: calc(50% - 0.5rem);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            transition: transform 0.3s ease;
-            z-index: 0;
-        }
-
-        .tab-slider.slide-right {
-            transform: translateX(100%);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Cards de invitaciones */
-        .invitations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .invitation-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .invitation-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-        }
-
-        .invitation-header {
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-        }
-
-        .invitation-header h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .invitation-header .event-date {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
-        .invitation-body {
-            padding: 2rem;
-        }
-
-        .qr-section {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 15px;
-        }
-
-        .qr-code {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 1rem;
-            border: 4px solid #667eea;
-            border-radius: 15px;
-            padding: 10px;
-            background: white;
-        }
-
-        .qr-code img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .qr-code-text {
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            color: #666;
-            word-break: break-all;
-            margin-top: 0.5rem;
-        }
-
-        .invitation-details {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: start;
-            gap: 1rem;
-            padding: 0.75rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .detail-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .detail-content {
-            flex: 1;
-        }
-
-        .detail-label {
-            font-size: 0.85rem;
-            color: #888;
-            margin-bottom: 0.25rem;
-        }
-
-        .detail-value {
-            font-size: 1rem;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .status-confirmado {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-pendiente {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-usado {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .status-cancelado {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-outline:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .invitation-actions {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-
-        /* Cards de eventos creados */
-        .event-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .event-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .event-card-header {
-            padding: 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .event-card-header h3 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .event-card-body {
-            padding: 2rem;
-        }
-
-        .event-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-box {
-            text-align: center;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 12px;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #667eea;
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        .event-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .empty-state i {
-            font-size: 5rem;
-            color: #667eea;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-state h2 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .empty-state p {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding-top: 80px;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-
-            .invitations-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .page-header h1 {
-                font-size: 2rem;
-            }
-
-            .tab-button {
-                padding: 0.75rem 1rem;
-                font-size: 0.95rem;
-            }
-
-            .invitation-actions,
-            .event-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                min-width: 100%;
-            }
-
-            .event-stats {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -520,6 +74,9 @@
                                 @case('pendiente')
                                 <i class="fas fa-clock"></i> Pendiente
                                 @break
+                                @case('rechazado')
+                                <i class="fas fa-times-circle"></i> Rechazado
+                                @break
                                 @case('usado')
                                 <i class="fas fa-check-double"></i> Usado
                                 @break
@@ -528,6 +85,16 @@
                                 @break
                                 @endswitch
                             </span>
+
+                            <!-- NUEVO: Mostrar deadline si existe -->
+                            @if($invitation->event->rsvp_deadline && $invitation->status === 'pendiente')
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: #fff3cd; border-radius: 8px; text-align: center;">
+                                <i class="fas fa-exclamation-triangle" style="color: #856404;"></i>
+                                <strong style="display: block; color: #856404; font-size: 0.9rem;">
+                                    Fecha límite: {{ $invitation->event->rsvp_deadline->format('d/m/Y H:i') }}
+                                </strong>
+                            </div>
+                            @endif
                         </div>
 
                         <div class="invitation-details">
@@ -552,6 +119,42 @@
                             </div>
                         </div>
 
+                        <!-- NUEVO: Botón de Confirmar Asistencia (solo si está pendiente) -->
+                        @if($invitation->status === 'pendiente')
+                        <div style="margin: 1.5rem 0;">
+                            <button class="btn btn-primary" style="width: 100%;" onclick="openRsvpModal('{{ $invitation->id }}', '{{ addslashes($invitation->event->title) }}')">
+                                <i class="fas fa-check-circle"></i>
+                                Confirmar mi Asistencia
+                            </button>
+                        </div>
+                        @endif
+
+                        <!-- NUEVO: Mensaje si está rechazado -->
+                        @if($invitation->status === 'rechazado')
+                        <div style="margin: 1.5rem 0; padding: 1rem; background: #f8d7da; border-radius: 8px; text-align: center;">
+                            <i class="fas fa-times-circle" style="color: #721c24; font-size: 1.5rem;"></i>
+                            <p style="color: #721c24; margin-top: 0.5rem; font-weight: 600;">
+                                Has rechazado esta invitación
+                            </p>
+                            <p style="color: #721c24; font-size: 0.85rem; margin-top: 0.25rem;">
+                                Tu código QR no es válido para el evento
+                            </p>
+                        </div>
+                        @endif
+
+                        <!-- NUEVO: Mensaje si está confirmado -->
+                        @if($invitation->status === 'confirmado')
+                        <div style="margin: 1.5rem 0; padding: 1rem; background: #d4edda; border-radius: 8px; text-align: center;">
+                            <i class="fas fa-check-circle" style="color: #155724; font-size: 1.5rem;"></i>
+                            <p style="color: #155724; margin-top: 0.5rem; font-weight: 600;">
+                                ¡Asistencia confirmada!
+                            </p>
+                            <p style="color: #155724; font-size: 0.85rem; margin-top: 0.25rem;">
+                                Tu código QR está activo. Preséntalo el día del evento.
+                            </p>
+                        </div>
+                        @endif
+
                         <div class="invitation-actions">
                             <button class="btn btn-primary" onclick="printInvitation(this)">
                                 <i class="fas fa-print"></i>
@@ -561,10 +164,10 @@
                                 <i class="fas fa-download"></i>
                                 Descargar QR
                             </button>
-                            <button class="btn btn-outline" onclick="shareInvitation('{{ $invitation->event->id }}')">
+                            <!-- <button class="btn btn-outline" onclick="shareInvitation('{{ $invitation->event->id }}')">
                                 <i class="fas fa-share"></i>
                                 Compartir
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -598,26 +201,34 @@
                     </div>
 
                     <div class="event-card-body">
-                        <div class="event-stats">
-                            <div class="stat-box">
-                                <span class="stat-number">{{ $event->confirmed_invitations_count }}</span>
+                        <!-- NUEVO: Estadísticas actualizadas con "Asistieron" -->
+                        <div class="event-stats" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="stat-box stat-used">
+                                <span class="stat-number">{{ $event->invitations->where('status', 'usado')->count() }}</span>
+                                <span class="stat-label">Asistieron</span>
+                            </div>
+                            <div class="stat-box stat-confirmed">
+                                <span class="stat-number">{{ $event->confirmedInvitations->count() }}</span>
                                 <span class="stat-label">Confirmados</span>
                             </div>
-                            <div class="stat-box">
-                                <span class="stat-number">{{ $event->invitations_count }}</span>
-                                <span class="stat-label">Total Invitaciones</span>
+                            <div class="stat-box stat-pending">
+                                <span class="stat-number">{{ $event->pendingInvitations->count() }}</span>
+                                <span class="stat-label">Pendientes</span>
                             </div>
-                            <div class="stat-box">
-                                <span class="stat-number">
-                                    @if($event->max_attendees)
-                                    {{ $event->max_attendees }}
-                                    @else
-                                    ∞
-                                    @endif
-                                </span>
-                                <span class="stat-label">Capacidad</span>
+                            <div class="stat-box stat-rejected">
+                                <span class="stat-number">{{ $event->rejectedInvitations->count() }}</span>
+                                <span class="stat-label">Rechazados</span>
                             </div>
                         </div>
+
+                        <!-- NUEVO: Mostrar deadline si existe -->
+                        @if($event->rsvp_deadline)
+                        <div style="margin: 1rem 0; padding: 0.75rem; background: #e7f3ff; border-left: 3px solid #2196F3; border-radius: 4px;">
+                            <i class="fas fa-clock" style="color: #2196F3;"></i>
+                            <strong style="font-size: 0.9rem; color: #1976D2;">Límite de confirmación:</strong>
+                            <span style="font-size: 0.9rem; color: #555;">{{ $event->rsvp_deadline->format('d/m/Y H:i') }}</span>
+                        </div>
+                        @endif
 
                         <div class="detail-item" style="margin-bottom: 1.5rem;">
                             <div class="detail-icon">
@@ -630,6 +241,11 @@
                         </div>
 
                         <div class="event-actions">
+                            <!-- NUEVO: Botón Ver Asistentes -->
+                            <button class="btn btn-info" onclick="showAttendees('{{ $event->id }}', '{{ addslashes($event->title) }}')">
+                                <i class="fas fa-users"></i>
+                                Ver Asistentes
+                            </button>
                             <a href="{{ route('eventos.scanner', $event->id) }}" class="btn btn-primary">
                                 <i class="fas fa-qrcode"></i>
                                 Escanear QR
@@ -661,132 +277,104 @@
         </div>
     </div>
 
+    <!-- ============================================ -->
+    <!-- NUEVO: MODAL DE CONFIRMACIÓN RSVP -->
+    <!-- ============================================ -->
+    <div id="rsvpModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeRsvpModal()"></div>
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-question-circle"></i> Confirmar Asistencia</h3>
+                <button class="modal-close" onclick="closeRsvpModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 1.1rem; margin-bottom: 1.5rem; text-align: center;">
+                    ¿Estás seguro de confirmar tu asistencia al evento <strong id="rsvpEventTitle"></strong>?
+                </p>
+
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <p style="color: #856404; font-size: 0.95rem; margin: 0; line-height: 1.6;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Nota Importante:</strong> Al confirmar tu asistencia, te comprometes a asistir al evento. Tu código QR será validado y solo podrás ingresar si has confirmado.
+                    </p>
+                </div>
+
+                <div class="modal-actions" style="display: flex; gap: 1rem;">
+                    <button class="btn btn-success" style="flex: 1;" onclick="confirmAttendance()">
+                        <i class="fas fa-check"></i>
+                        Sí, Asistiré
+                    </button>
+                    <button class="btn btn-danger" style="flex: 1;" onclick="rejectInvitation()">
+                        <i class="fas fa-times"></i>
+                        Rechazar Invitación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NUEVO: MODAL DE LISTA DE ASISTENTES -->
+    <!-- ============================================ -->
+    <div id="attendeesModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeAttendeesModal()"></div>
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> Lista de Asistentes</h3>
+                <button class="modal-close" onclick="closeAttendeesModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="attendeesEventInfo" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <!-- Info del evento se cargará aquí -->
+                </div>
+
+                <!-- Resumen de estadísticas -->
+                <div id="attendeesStats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <!-- Las estadísticas se cargarán aquí -->
+                </div>
+
+                <!-- Tabs para filtrar -->
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e0e0e0;">
+                    <button class="attendees-tab active" data-status="all" onclick="filterAttendees('all')">
+                        Todos
+                    </button>
+                    <button class="attendees-tab" data-status="confirmado" onclick="filterAttendees('confirmado')">
+                        <i class="fas fa-check-circle"></i> Confirmados
+                    </button>
+                    <button class="attendees-tab" data-status="pendiente" onclick="filterAttendees('pendiente')">
+                        <i class="fas fa-clock"></i> Pendientes
+                    </button>
+                    <button class="attendees-tab" data-status="rechazado" onclick="filterAttendees('rechazado')">
+                        <i class="fas fa-times-circle"></i> Rechazados
+                    </button>
+                </div>
+
+                <!-- Lista de asistentes -->
+                <div id="attendeesList">
+                    <!-- La lista se cargará aquí dinámicamente -->
+                </div>
+
+                <div id="attendeesLoading" style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #667eea;"></i>
+                    <p style="margin-top: 1rem; color: #666;">Cargando asistentes...</p>
+                </div>
+
+                <div id="attendeesEmpty" style="display: none; text-align: center; padding: 2rem; color: #999;">
+                    <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>No hay asistentes en esta categoría</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @include('partials.footer')
 
-    <script>
-        // Cambiar entre pestañas
-        function switchTab(tab) {
-            const slider = document.getElementById('tabSlider');
-            const tabs = document.querySelectorAll('.tab-button');
-            const contents = document.querySelectorAll('.tab-content');
+    <script src="{{ asset('js/misInvitaciones.js') }}"></script>
 
-            // Actualizar botones
-            tabs.forEach(t => t.classList.remove('active'));
-            if (tab === 'invitations') {
-                tabs[0].classList.add('active');
-                slider.classList.remove('slide-right');
-            } else {
-                tabs[1].classList.add('active');
-                slider.classList.add('slide-right');
-            }
-
-            // Actualizar contenido
-            contents.forEach(c => c.classList.remove('active'));
-            document.getElementById(tab + '-content').classList.add('active');
-        }
-
-        // Imprimir invitación individual
-        function printInvitation(button) {
-            const card = button.closest('.invitation-card');
-            const allCards = document.querySelectorAll('.invitation-card');
-
-            allCards.forEach(c => {
-                if (c !== card) c.style.display = 'none';
-            });
-
-            window.print();
-
-            setTimeout(() => {
-                allCards.forEach(c => c.style.display = 'block');
-            }, 100);
-        }
-
-        // Descargar QR individual
-        function downloadQR(button) {
-            const card = button.closest('.invitation-card');
-            const qrImage = card.querySelector('.qr-code img');
-
-            if (qrImage && qrImage.src) {
-                fetch(qrImage.src)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = `invitacion-qr-${Date.now()}.png`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        window.URL.revokeObjectURL(url);
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        alert('Error al descargar el código QR');
-                    });
-            } else {
-                alert('No se encontró el código QR');
-            }
-        }
-
-        // Compartir invitación
-        function shareInvitation(eventId) {
-            const url = `${window.location.origin}/eventos/${eventId}`;
-            const message = `¡Mira este evento! ${url}`;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Invitación a Evento',
-                    text: message,
-                    url: url
-                }).catch(err => console.log('Error al compartir:', err));
-            } else {
-                navigator.clipboard.writeText(url).then(() => {
-                    alert('Enlace copiado al portapapeles');
-                }).catch(() => {
-                    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-                    window.open(whatsappUrl, '_blank');
-                });
-            }
-        }
-
-        // Restaurar vista después de imprimir
-        window.addEventListener('afterprint', function() {
-            document.querySelectorAll('.invitation-card').forEach(card => {
-                card.style.display = 'block';
-            });
-        });
-
-        // Confirmar y eliminar evento
-        function confirmDeleteEvent(eventId, eventTitle) {
-            if (confirm(`¿Estás seguro de que deseas eliminar el evento "${eventTitle}"?\n\nEsta acción no se puede deshacer y se eliminarán todas las invitaciones asociadas.`)) {
-                deleteEvent(eventId);
-            }
-        }
-
-        async function deleteEvent(eventId) {
-            try {
-                const response = await fetch(`/eventos/${eventId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json',
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    alert(data.message || 'Error al eliminar el evento');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Hubo un error al eliminar el evento');
-            }
-        }
-    </script>
 </body>
 
 </html>

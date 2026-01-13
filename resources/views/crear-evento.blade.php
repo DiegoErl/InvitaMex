@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@400;600;700&family=Dancing+Script:wght@400;700&family=Lora:wght@400;600&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
 
 </head>
 
@@ -131,12 +132,432 @@
                                 <div class="field-error" id="event_timeError"></div>
                             </div>
                         </div>
+
+                        <!-- NUEVO: LÍMITE DE CONFIRMACIÓN RSVP -->
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label for="rsvp_deadline" class="form-label">
+                                <i class="fas fa-hourglass-half"></i>
+                                Fecha Límite para Confirmar Asistencia (Opcional)
+                            </label>
+                            <input type="datetime-local"
+                                id="rsvp_deadline"
+                                name="rsvp_deadline"
+                                class="form-input"
+                                placeholder="Fecha y hora límite">
+                            <div class="info-box" style="margin-top: 0.75rem;">
+                                <i class="fas fa-info-circle"></i>
+                                Los invitados deberán confirmar su asistencia antes de esta fecha. Si no se especifica, podrán confirmar en cualquier momento.
+                            </div>
+                            <div class="field-error" id="rsvp_deadlineError"></div>
+                        </div>
                     </div>
 
-                    <!-- PASO 3: Imágenes del Evento -->
+
+
+                    <!-- PASO 3: Acceso y Capacidad -->
                     <div class="form-step">
                         <div class="step-header">
                             <div class="step-number">3</div>
+                            <h3 class="step-title">Acceso y Capacidad</h3>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Tipo de Acceso <span class="required">*</span>
+                            </label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio"
+                                        name="payment_type"
+                                        value="gratis"
+                                        id="paymentGratis"
+                                        checked>
+                                    <div>
+                                        <strong style="display: block; margin-bottom: 0.25rem;">🎁 Evento Gratuito</strong>
+                                        <small style="color: #666;">Sin costo de entrada</small>
+                                    </div>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio"
+                                        name="payment_type"
+                                        value="pago"
+                                        id="paymentPago">
+                                    <div>
+                                        <strong style="display: block; margin-bottom: 0.25rem;">💵 Evento de Pago</strong>
+                                        <small style="color: #666;">Requiere boleto</small>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="field-error" id="payment_typeError"></div>
+                        </div>
+
+                        <div class="form-group" id="priceGroup" style="display: none;">
+                            <label for="price" class="form-label">
+                                Precio por Persona <span class="required">*</span>
+                            </label>
+                            <input type="number"
+                                id="price"
+                                name="price"
+                                class="form-input"
+                                placeholder="0.00"
+                                step="0.01"
+                                min="0">
+                            <div class="field-error" id="priceError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_attendees" class="form-label">
+                                Capacidad Máxima (Opcional)
+                            </label>
+                            <input type="number"
+                                id="max_attendees"
+                                name="max_attendees"
+                                class="form-input"
+                                placeholder="Ejemplo: 100, 200, 500..."
+                                min="1">
+                            <div class="info-box">
+                                <i class="fas fa-info-circle"></i>
+                                Deja este campo vacío si no hay límite de asistentes
+                            </div>
+                            <div class="field-error" id="max_attendeesError"></div>
+                        </div>
+                    </div>
+
+                    <!-- PASO 4: Descripción -->
+                    <div class="form-step">
+                        <div class="step-header">
+                            <div class="step-number">4</div>
+                            <h3 class="step-title">Descripción del Evento</h3>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">
+                                Descripción Completa <span class="required">*</span>
+                            </label>
+                            <textarea id="description"
+                                name="description"
+                                class="form-textarea"
+                                placeholder="Describe tu evento: &#10;• ¿De qué trata?&#10;• ¿Qué pueden esperar los invitados?&#10;• Código de vestimenta&#10;• Información adicional importante..."
+                                maxlength="2000"
+                                required></textarea>
+                            <div class="char-count">
+                                <span id="charCount">0</span> / 2000 caracteres
+                            </div>
+                            <div class="field-error" id="descriptionError"></div>
+                        </div>
+                    </div>
+
+
+                    <!-- ============================================ -->
+                    <!-- NUEVO: PASO 5 - DISEÑO Y PERSONALIZACIÓN -->
+                    <!-- Insertar DESPUÉS del paso 5 (Descripción) -->
+                    <!-- ============================================ -->
+
+                    <div class="form-step">
+                        <div class="step-header">
+                            <div class="step-number">5</div>
+                            <h3 class="step-title">🎨 Diseño y Personalización</h3>
+                        </div>
+
+                        <div class="info-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                            <i class="fas fa-magic"></i>
+                            <strong>¡Dale vida a tu invitación!</strong> Elige una plantilla, personaliza colores y fuentes para crear una invitación única.
+                        </div>
+
+                        <!-- SELECTOR DE PLANTILLAS POR TIPO -->
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label class="form-label">
+                                <i class="fas fa-palette"></i>
+                                Selecciona una Plantilla
+                            </label>
+
+                            <div class="templates-container">
+                                <!-- Plantillas para Bodas -->
+                                <div class="template-category" data-type="boda">
+                                    <h4 class="category-title">💍 Plantillas para Bodas</h4>
+                                    <div class="templates-grid">
+                                        <div class="template-card" data-template="boda-elegante" onclick="selectTemplate('boda-elegante')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);">
+                                                <i class="fas fa-rings-wedding"></i>
+                                            </div>
+                                            <h5>Elegante</h5>
+                                            <p>Dorado y sofisticado</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="boda-romantica" onclick="selectTemplate('boda-romantica')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #ff6b9d 0%, #ffc3d7 100%);">
+                                                <i class="fas fa-heart"></i>
+                                            </div>
+                                            <h5>Romántica</h5>
+                                            <p>Rosa y delicado</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="boda-moderna" onclick="selectTemplate('boda-moderna')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);">
+                                                <i class="fas fa-gem"></i>
+                                            </div>
+                                            <h5>Moderna</h5>
+                                            <p>Azul y minimalista</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="boda-vintage" onclick="selectTemplate('boda-vintage')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #d4a574 0%, #e6c896 100%);">
+                                                <i class="fas fa-scroll"></i>
+                                            </div>
+                                            <h5>Vintage</h5>
+                                            <p>Sepia y clásico</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Plantillas para Cumpleaños -->
+                                <div class="template-category" data-type="cumpleanos">
+                                    <h4 class="category-title">🎂 Plantillas para Cumpleaños</h4>
+                                    <div class="templates-grid">
+                                        <div class="template-card" data-template="cumple-festivo" onclick="selectTemplate('cumple-festivo')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
+                                                <i class="fas fa-party-horn"></i>
+                                            </div>
+                                            <h5>Festivo</h5>
+                                            <p>Colorido y alegre</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="cumple-infantil" onclick="selectTemplate('cumple-infantil')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);">
+                                                <i class="fas fa-balloon"></i>
+                                            </div>
+                                            <h5>Infantil</h5>
+                                            <p>Divertido y tierno</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="cumple-elegante" onclick="selectTemplate('cumple-elegante')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);">
+                                                <i class="fas fa-champagne-glasses"></i>
+                                            </div>
+                                            <h5>Elegante</h5>
+                                            <p>Sofisticado</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Plantillas para XV Años -->
+                                <div class="template-category" data-type="xv">
+                                    <h4 class="category-title">👑 Plantillas para XV Años</h4>
+                                    <div class="templates-grid">
+                                        <div class="template-card" data-template="xv-princesa" onclick="selectTemplate('xv-princesa')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #ff9ff3 0%, #feca57 100%);">
+                                                <i class="fas fa-crown"></i>
+                                            </div>
+                                            <h5>Princesa</h5>
+                                            <p>Rosa y dorado</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="xv-moderna" onclick="selectTemplate('xv-moderna')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);">
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                            <h5>Moderna</h5>
+                                            <p>Turquesa brillante</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="xv-elegante" onclick="selectTemplate('xv-elegante')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #341f97 0%, #ee5a6f 100%);">
+                                                <i class="fas fa-sparkles"></i>
+                                            </div>
+                                            <h5>Elegante</h5>
+                                            <p>Morado y rosa</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Plantillas Generales -->
+                                <div class="template-category" data-type="general" style="display: block;">
+                                    <h4 class="category-title">✨ Plantillas Generales</h4>
+                                    <div class="templates-grid">
+                                        <div class="template-card active" data-template="basica" onclick="selectTemplate('basica')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
+                                            <h5>Básica</h5>
+                                            <p>Clásica y versátil</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="colorida" onclick="selectTemplate('colorida')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #f093fb 0%, #4facfe 100%);">
+                                                <i class="fas fa-paint-brush"></i>
+                                            </div>
+                                            <h5>Colorida</h5>
+                                            <p>Vibrante y alegre</p>
+                                        </div>
+
+                                        <div class="template-card" data-template="minimalista" onclick="selectTemplate('minimalista')">
+                                            <div class="template-preview" style="background: linear-gradient(135deg, #2c3e50 0%, #95a5a6 100%);">
+                                                <i class="fas fa-circle-notch"></i>
+                                            </div>
+                                            <h5>Minimalista</h5>
+                                            <p>Limpia y simple</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="template_id" id="template_id" value="basica">
+                        </div>
+
+                        <!-- PERSONALIZACIÓN DE COLORES -->
+                        <div class="form-group" style="margin-top: 2.5rem;">
+                            <label class="form-label">
+                                <i class="fas fa-palette"></i>
+                                Colores Personalizados
+                            </label>
+
+                            <div class="color-pickers-grid">
+                                <div class="color-picker-item">
+                                    <label>Color Primario</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" name="primary_color" id="primary_color" value="#667eea" onchange="updatePreviewColors()">
+                                        <input type="text" class="color-hex" id="primary_hex" value="#667eea" maxlength="7" onchange="syncColorPicker('primary')">
+                                    </div>
+                                </div>
+
+                                <div class="color-picker-item">
+                                    <label>Color Secundario</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" name="secondary_color" id="secondary_color" value="#764ba2" onchange="updatePreviewColors()">
+                                        <input type="text" class="color-hex" id="secondary_hex" value="#764ba2" maxlength="7" onchange="syncColorPicker('secondary')">
+                                    </div>
+                                </div>
+
+                                <div class="color-picker-item">
+                                    <label>Color de Fondo</label>
+                                    <div class="color-input-wrapper">
+                                        <input type="color" name="background_color" id="background_color" value="#ffffff" onchange="updatePreviewColors()">
+                                        <input type="text" class="color-hex" id="background_hex" value="#ffffff" maxlength="7" onchange="syncColorPicker('background')">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="color-presets" style="margin-top: 1.5rem;">
+                                <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.75rem;">
+                                    <i class="fas fa-swatchbook"></i> Esquemas predefinidos:
+                                </p>
+                                <div class="presets-grid">
+                                    <button type="button" class="preset-btn" onclick="applyColorPreset('#667eea', '#764ba2', '#ffffff')"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                        Púrpura
+                                    </button>
+                                    <button type="button" class="preset-btn" onclick="applyColorPreset('#ff6b9d', '#ffc3d7', '#fff5f8')"
+                                        style="background: linear-gradient(135deg, #ff6b9d 0%, #ffc3d7 100%);">
+                                        Rosa
+                                    </button>
+                                    <button type="button" class="preset-btn" onclick="applyColorPreset('#4facfe', '#00f2fe', '#f0f9ff')"
+                                        style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                                        Azul
+                                    </button>
+                                    <button type="button" class="preset-btn" onclick="applyColorPreset('#ffd700', '#ffed4e', '#fffdf0')"
+                                        style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);">
+                                        Dorado
+                                    </button>
+                                    <button type="button" class="preset-btn" onclick="applyColorPreset('#11998e', '#38ef7d', '#f0fff4')"
+                                        style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                                        Verde
+                                    </button>
+                                    <button type="button" class="preset-btn" onclick="applyColorPreset('#2c3e50', '#34495e', '#ecf0f1')"
+                                        style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);">
+                                        Oscuro
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SELECTOR DE FUENTES -->
+                        <div class="form-group" style="margin-top: 2.5rem;">
+                            <label class="form-label">
+                                <i class="fas fa-font"></i>
+                                Tipografía
+                            </label>
+
+                            <div class="font-selector-grid">
+                                <div class="font-option" onclick="selectFont('Inter')">
+                                    <div class="font-preview" style="font-family: 'Inter', sans-serif;">
+                                        Aa
+                                    </div>
+                                    <div class="font-name">Inter</div>
+                                    <div class="font-type">Moderna</div>
+                                </div>
+
+                                <div class="font-option" onclick="selectFont('Playfair Display')">
+                                    <div class="font-preview" style="font-family: 'Playfair Display', serif;">
+                                        Aa
+                                    </div>
+                                    <div class="font-name">Playfair</div>
+                                    <div class="font-type">Elegante</div>
+                                </div>
+
+                                <div class="font-option" onclick="selectFont('Montserrat')">
+                                    <div class="font-preview" style="font-family: 'Montserrat', sans-serif;">
+                                        Aa
+                                    </div>
+                                    <div class="font-name">Montserrat</div>
+                                    <div class="font-type">Limpia</div>
+                                </div>
+
+                                <div class="font-option" onclick="selectFont('Dancing Script')">
+                                    <div class="font-preview" style="font-family: 'Dancing Script', cursive;">
+                                        Aa
+                                    </div>
+                                    <div class="font-name">Dancing</div>
+                                    <div class="font-type">Cursiva</div>
+                                </div>
+
+                                <div class="font-option" onclick="selectFont('Lora')">
+                                    <div class="font-preview" style="font-family: 'Lora', serif;">
+                                        Aa
+                                    </div>
+                                    <div class="font-name">Lora</div>
+                                    <div class="font-type">Clásica</div>
+                                </div>
+
+                                <div class="font-option" onclick="selectFont('Raleway')">
+                                    <div class="font-preview" style="font-family: 'Raleway', sans-serif;">
+                                        Aa
+                                    </div>
+                                    <div class="font-name">Raleway</div>
+                                    <div class="font-type">Delgada</div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="font_family" id="font_family" value="Inter">
+                        </div>
+
+                        <!-- TAMAÑO DE TEXTO -->
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label class="form-label">
+                                <i class="fas fa-text-height"></i>
+                                Tamaño de Texto
+                            </label>
+
+                            <div class="size-selector">
+                                <label class="size-option">
+                                    <input type="radio" name="font_size" value="small" onchange="updatePreviewSize()">
+                                    <span>Pequeño</span>
+                                </label>
+                                <label class="size-option">
+                                    <input type="radio" name="font_size" value="medium" checked onchange="updatePreviewSize()">
+                                    <span>Mediano</span>
+                                </label>
+                                <label class="size-option">
+                                    <input type="radio" name="font_size" value="large" onchange="updatePreviewSize()">
+                                    <span>Grande</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASO 6: Imágenes del Evento -->
+                    <div class="form-step">
+                        <div class="step-header">
+                            <div class="step-number">6</div>
                             <h3 class="step-title">Imágenes del Evento</h3>
                         </div>
 
@@ -206,103 +627,11 @@
                         </div>
                     </div>
 
-                    <!-- PASO 4: Acceso y Capacidad -->
+
+                    <!-- PASO 7: Configuración de Visibilidad -->
                     <div class="form-step">
                         <div class="step-header">
-                            <div class="step-number">4</div>
-                            <h3 class="step-title">Acceso y Capacidad</h3>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">
-                                Tipo de Acceso <span class="required">*</span>
-                            </label>
-                            <div class="radio-group">
-                                <label class="radio-option">
-                                    <input type="radio"
-                                        name="payment_type"
-                                        value="gratis"
-                                        id="paymentGratis"
-                                        checked>
-                                    <div>
-                                        <strong style="display: block; margin-bottom: 0.25rem;">🎁 Evento Gratuito</strong>
-                                        <small style="color: #666;">Sin costo de entrada</small>
-                                    </div>
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio"
-                                        name="payment_type"
-                                        value="pago"
-                                        id="paymentPago">
-                                    <div>
-                                        <strong style="display: block; margin-bottom: 0.25rem;">💵 Evento de Pago</strong>
-                                        <small style="color: #666;">Requiere boleto</small>
-                                    </div>
-                                </label>
-                            </div>
-                            <div class="field-error" id="payment_typeError"></div>
-                        </div>
-
-                        <div class="form-group" id="priceGroup" style="display: none;">
-                            <label for="price" class="form-label">
-                                Precio por Persona <span class="required">*</span>
-                            </label>
-                            <input type="number"
-                                id="price"
-                                name="price"
-                                class="form-input"
-                                placeholder="0.00"
-                                step="0.01"
-                                min="0">
-                            <div class="field-error" id="priceError"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="max_attendees" class="form-label">
-                                Capacidad Máxima (Opcional)
-                            </label>
-                            <input type="number"
-                                id="max_attendees"
-                                name="max_attendees"
-                                class="form-input"
-                                placeholder="Ejemplo: 100, 200, 500..."
-                                min="1">
-                            <div class="info-box">
-                                <i class="fas fa-info-circle"></i>
-                                Deja este campo vacío si no hay límite de asistentes
-                            </div>
-                            <div class="field-error" id="max_attendeesError"></div>
-                        </div>
-                    </div>
-
-                    <!-- PASO 5: Descripción -->
-                    <div class="form-step">
-                        <div class="step-header">
-                            <div class="step-number">5</div>
-                            <h3 class="step-title">Descripción del Evento</h3>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="description" class="form-label">
-                                Descripción Completa <span class="required">*</span>
-                            </label>
-                            <textarea id="description"
-                                name="description"
-                                class="form-textarea"
-                                placeholder="Describe tu evento: &#10;• ¿De qué trata?&#10;• ¿Qué pueden esperar los invitados?&#10;• Código de vestimenta&#10;• Información adicional importante..."
-                                maxlength="2000"
-                                required></textarea>
-                            <div class="char-count">
-                                <span id="charCount">0</span> / 2000 caracteres
-                            </div>
-                            <div class="field-error" id="descriptionError"></div>
-                        </div>
-                    </div>
-
-                    <!-- PASO 6: Configuración de Visibilidad -->
-                    <div class="form-step">
-                        <div class="step-header">
-                            <div class="step-number">6</div>
+                            <div class="step-number">7</div>
                             <h3 class="step-title">Visibilidad</h3>
                         </div>
 

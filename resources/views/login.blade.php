@@ -81,7 +81,7 @@
 
                 <!-- SOCIAL LOGIN -->
                 <div class="social-login">
-                    <button class="social-btn google-btn" onclick="loginWithGoogle()">
+                    <button class="social-btn google-btn" onclick="window.location.href='{{ route('auth.google') }}'">
                         <i class="fab fa-google"></i>
                         Continuar con Google
                     </button>
@@ -122,13 +122,15 @@
                     <div id="generalError" class="field-error" style="display: none; margin-bottom: 1rem;"></div>
 
                     <div class="form-options">
-                        <div class="checkbox-group">
+                        <!-- <div class="checkbox-group">
                             <input type="checkbox" id="remember" name="remember" value="1">
                             <label for="remember">Recordarme</label>
-                        </div>
-                        <a href="#forgot-password" class="forgot-password" onclick="showForgotPassword()">
+                        </div> -->
+
+                        <a href="{{ route('password.request') }}" class="forgot-password">
                             ¿Olvidaste tu contraseña?
                         </a>
+
                     </div>
 
                     <button type="submit" class="login-btn" id="loginBtn">

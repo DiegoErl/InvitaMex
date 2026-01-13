@@ -154,6 +154,8 @@
         <div class="modal-content">
             <div class="modal-close" onclick="closeModal()">&times;</div>
 
+
+
             <!-- IMAGEN DE PORTADA PRINCIPAL -->
             <div class="modal-header-image" id="modalHeaderImage" onclick="openImageViewer(0)">
                 <img id="modalMainImage" src="" alt="Evento" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;">
@@ -228,6 +230,10 @@
                 </div>
 
                 <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="viewFullInvitation()">
+                        <i class="fas fa-eye"></i>
+                        Ver Invitación Completa
+                    </button>
                     <button class="btn btn-primary" onclick="confirmAttendance()">
                         <i class="fas fa-check"></i>
                         Confirmar Asistencia
@@ -268,205 +274,7 @@
         </div>
     </div>
 
-    <style>
-        /* Estilos para la imagen de portada en el modal */
-        .modal-header-image {
-            width: 100%;
-            height: 300px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 20px 20px 0 0;
-            background: #f0f0f0;
-        }
-
-        .image-zoom-hint {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-header-image:hover .image-zoom-hint {
-            opacity: 1;
-        }
-
-        /* Estilos para la galería de miniaturas */
-        .modal-gallery {
-            margin: 1.5rem 0;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 12px;
-        }
-
-        .gallery-thumbnails {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-        }
-
-        .gallery-thumbnail {
-            aspect-ratio: 1;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-
-        .gallery-thumbnail:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .gallery-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .gallery-thumbnail-number {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Modal de vista ampliada */
-        .image-viewer-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 100000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .image-viewer-modal.show {
-            display: flex;
-        }
-
-        .image-viewer-content {
-            position: relative;
-            width: 90%;
-            height: 90%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .viewer-image-container {
-            max-width: 100%;
-            max-height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .viewer-image-container img {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .viewer-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .viewer-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-
-        .viewer-control {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .viewer-control:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .viewer-control.prev {
-            left: 20px;
-        }
-
-        .viewer-control.next {
-            right: 20px;
-        }
-
-        .viewer-counter {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .modal-header-image {
-                height: 200px;
-            }
-
-            .gallery-thumbnails {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            }
-
-            .viewer-control {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+    
 
     <!-- FOOTER -->
     @include('partials.footer')
@@ -510,14 +318,14 @@
                     </button>
                 </form>
 
-                <div class="test-cards-info">
+                <!-- <div class="test-cards-info">
                     <p><strong>🧪 Tarjetas de Prueba:</strong></p>
                     <ul>
                         <li>Éxito: <code>4242 4242 4242 4242</code></li>
                         <li>Fecha: Cualquier futura (ej: 12/25)</li>
                         <li>CVC: Cualquier 3 dígitos (ej: 123)</li>
                     </ul>
-                </div>
+                </div> -->
 
                 <div class="security-badge">
                     <i class="fas fa-shield-alt"></i>
@@ -527,231 +335,7 @@
         </div>
     </div>
 
-    <style>
-        /* Estilos del Modal de Pago */
-        .payment-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .payment-modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-        }
-
-        .payment-modal-content {
-            position: relative;
-            background: white;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px) scale(0.9);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .payment-modal-header {
-            padding: 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 20px 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .payment-modal-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .modal-close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
-        }
-
-        .payment-modal-body {
-            padding: 2rem;
-        }
-
-        .event-summary {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-        }
-
-        .event-summary h3 {
-            color: #333;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .event-summary p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .price-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 2px solid #e0e0e0;
-            font-size: 1.1rem;
-        }
-
-        .price-display strong {
-            color: #667eea;
-            font-size: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            color: #555;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        #card-element {
-            padding: 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            background: white;
-        }
-
-        #card-element.StripeElement--focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .card-errors {
-            color: #dc3545;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
-        .card-errors.show {
-            display: block;
-        }
-
-        .btn-pay {
-            width: 100%;
-            padding: 1.2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-pay:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-pay:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .test-cards-info {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #fff3cd;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
-
-        .test-cards-info code {
-            background: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .security-badge {
-            text-align: center;
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background: #e3f2fd;
-            border-radius: 8px;
-            color: #1976d2;
-            font-size: 0.9rem;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    
 
 
     <script src="https://js.stripe.com/v3/"></script>
